@@ -2,7 +2,6 @@ openpyxl
 pandas
 numpy
 matplotlib
-matplotlib.pyplot
 seaborn
 plotly
 mplsoccer
