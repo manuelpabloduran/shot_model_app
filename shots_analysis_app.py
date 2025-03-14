@@ -9,7 +9,7 @@ from gk_charts import *
 st.title("Shot Analysis")
 
 # Cargar datos
-df = pd.read_csv('xgot_model_version_17_02.csv')
+df = pd.read_csv('historical_shot_model_pred.csv')
 
 # Crear pestañas
 tab1, tab2 = st.tabs(["GoalKeeper Analysis", "Historical Shot Analysis"])
