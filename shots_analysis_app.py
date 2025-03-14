@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import os
+from tqdm import tqdm
 
 # Título de la aplicación
 st.title("Shot Analysis")

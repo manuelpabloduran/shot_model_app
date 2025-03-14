@@ -6,3 +6,5 @@ seaborn
 plotly
 mplsoccer
 streamlit
+os
+tqdm
