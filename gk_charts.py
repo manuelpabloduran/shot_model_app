@@ -12,7 +12,7 @@ def plot_goalkeeper_analysis(df_filtered):
     z_max = 34.8
     
     # Cargar la imagen de fondo
-    goal_img = Image.open("goal_fondo_2.jpg")
+    goal_img = Image.open("images/goal_fondo_2.jpg")
     
     # Filtrar eventos
     df_goal = df_filtered[df_filtered['NaEventType'] == "Goal"]
