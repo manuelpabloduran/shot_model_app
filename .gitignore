@@ -172,3 +172,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+*.json
+
+# Excel and csv file and extensions
+*.xlsx
+*.xls
+*.csv
