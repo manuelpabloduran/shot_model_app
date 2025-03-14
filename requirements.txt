@@ -7,4 +7,3 @@ plotly
 mplsoccer
 streamlit
 os
-tqdm
