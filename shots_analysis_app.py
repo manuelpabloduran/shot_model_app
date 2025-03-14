@@ -8,7 +8,11 @@ from PIL import Image
 st.title("Shot Analysis")
 
 # Cargar datos
-df = pd.read_csv('xgot_model_version_17_02.csv')
+df = pd.read_csv('historical_shot_model_pred.csv')
+
+# Cargar la imagen de fondo
+goal_img = Image.open("images/goal_fondo_2.jpg")
+    
 
 # Crear pestañas
 tab1, tab2 = st.tabs(["GoalKeeper Analysis", "Historical Shot Analysis"])
@@ -27,9 +31,6 @@ with tab1:
     y_post2 = 54.8
     z_min = 0
     z_max = 34.8
-    
-    # Cargar la imagen de fondo
-    goal_img = Image.open("images/goal_fondo_2.jpg")
     
     # Filtrar eventos
     df_goal = df_filtered[df_filtered['NaEventType'] == "Goal"]
