@@ -146,9 +146,9 @@ def plot_performance_heatmap(df, bins_y, bins_z):
     return fig
 
 # Función para generar el heatmap de rendimiento esperado
-def plot_performance_heatmap(df, event_list, title_event, bins_y, bins_z, cmap_color):
+def plot_performance_heatmap(df, event, title_event, bins_y, bins_z, cmap_color):
 
-    df_analysis = df[df['NaEventType'].isin(event_list)]
+    df_analysis = df[df['NaEventType']==event]
 
     # Definir el tamaño de la grilla
     num_bins_y = bins_y  # Número de divisiones en Y (ancho del arco)
