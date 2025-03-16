@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
+from mplsoccer import VerticalPitch, Pitch, PyPizza, add_image, FontManager
 
 # Función para generar el gráfico
 def plot_goalkeeper_analysis(df_filtered):
@@ -57,5 +58,22 @@ def plot_goalkeeper_analysis(df_filtered):
     
     # Invertir el eje X para que coincida con la perspectiva del arco
     ax.invert_xaxis()
+    
+    return fig
+
+def plot_shot_map(df):
+    # Crear el campo de fútbol
+    pitch = Pitch(pitch_type='opta', line_color='black')
+    fig, ax = pitch.draw(figsize=(10, 6))
+    
+    # Graficar los puntos
+    sc = ax.scatter(df["x"], df["y"], c=df["pred_proba"], cmap="RdYlGn", alpha=0.4)
+    
+    # Agregar barra de colores
+    cbar = plt.colorbar(sc, ax=ax)
+    cbar.set_label("Probabilidad de gol")
+    
+    # Título del gráfico
+    ax.set_title("Mapa de disparos", fontsize=14)
     
     return fig
