@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 from mplsoccer import VerticalPitch, Pitch, PyPizza, add_image, FontManager
+import seaborn as sns
 
 # Función para generar el gráfico
 def plot_goalkeeper_analysis(df_filtered):
@@ -97,15 +98,44 @@ def plot_goal_vs_miss(df):
     df_miss["size"] = df_miss["pred_proba"].apply(scale_size)
     
     # Graficar los goles en verde
-    ax.scatter(df_goal["x"], df_goal["y"], color='green', s=df_goal["size"], alpha=0.6, edgecolors='black', label='Gol')
+    ax.scatter(df_goal["x"], df_goal["y"], color='green', s=df_goal["size"], alpha=0.4, edgecolors='black', label='Gol')
     
     # Graficar los no goles en rojo
-    ax.scatter(df_miss["x"], df_miss["y"], color='red', s=df_miss["size"], alpha=0.6, edgecolors='black', label='No Gol')
+    ax.scatter(df_miss["x"], df_miss["y"], color='red', s=df_miss["size"], alpha=0.4, edgecolors='black', label='No Gol')
     
     # Agregar leyenda
     ax.legend()
     
     # Título del gráfico
     ax.set_title("Disparos: Goles vs Atajadas", fontsize=14)
+    
+    return fig
+
+# Función para generar el heatmap de rendimiento esperado
+def plot_performance_heatmap(df):
+    num_bins_y = 6  # Número de divisiones en Y (ancho del arco)
+    num_bins_z = 3   # Número de divisiones en Z (altura del arco)
+    
+    df['y_bin'] = pd.cut(df['y_end'], bins=num_bins_y, labels=False)
+    df['z_bin'] = pd.cut(df['z_end'], bins=num_bins_z, labels=False)
+    df['diff'] = df['pred_proba'] - df['outcome']
+    
+    heatmap_data = df.groupby(['z_bin', 'y_bin'])['diff'].sum().unstack().fillna(0)
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.heatmap(
+        heatmap_data, 
+        cmap="RdYlGn", 
+        vmin=-2, vmax=2,
+        annot=True, fmt=".2f", 
+        linewidths=0.5, linecolor='gray',
+        cbar_kws={'label': 'Rendimiento Acumulado'}
+    )
+    
+    ax.set_title('Rendimiento vs Esperado Según Zona del Arco', fontsize=14)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.invert_xaxis()
+    ax.invert_yaxis()
     
     return fig

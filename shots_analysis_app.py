@@ -42,19 +42,22 @@ with tab1:
     # Filtrar datos por portero seleccionado
     df_filtered = df[df['NaPlayer_gk'] == selected_gk]
     
-    # Generar y mostrar el gráfico del análisis del portero
-    fig = plot_goalkeeper_analysis(df_filtered)
-    st.pyplot(fig)
-    
     # Crear una disposición en columnas para mostrar los gráficos en la misma fila
     col1, col2 = st.columns(2)
     
     with col1:
+        # Generar y mostrar el gráfico del análisis del portero
+        fig = plot_goalkeeper_analysis(df_filtered)
+        st.pyplot(fig)
+        
         # Generar y mostrar el gráfico del mapa de disparos
         fig_prob_shot_map = plot_shot_map(df_filtered)
         st.pyplot(fig_prob_shot_map)
 
     with col2:
+        fig = plot_performance_heatmap(df_filtered)
+        st.pyplot(fig)
+        
         fig_shot_map = plot_goal_vs_miss(df_filtered)
         st.pyplot(fig_shot_map)    
 
