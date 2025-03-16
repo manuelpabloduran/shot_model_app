@@ -186,4 +186,4 @@ def plot_performance_heatmap(df, event, title_event, bins_y, bins_z, cmap_color)
     ax.invert_yaxis()
 
     # Mostrar el gráfico
-    plt.show()
+    return fig
