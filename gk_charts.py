@@ -62,12 +62,14 @@ def plot_goalkeeper_analysis(df_filtered):
     return fig
 
 def plot_shot_map(df):
+    df_gol_saved = df[df["NaEventType"].isin(["Goal", "Attempt Saved"])]
+    
     # Crear el campo de fútbol
     pitch = Pitch(pitch_type='opta', line_color='black')
     fig, ax = pitch.draw(figsize=(10, 6))
     
     # Graficar los puntos
-    sc = ax.scatter(df["x"], df["y"], c=df["pred_proba"], cmap="RdYlGn", alpha=0.4)
+    sc = ax.scatter(df_gol_saved["x"], df_gol_saved["y"], c=df_gol_saved["pred_proba"], cmap="RdYlGn", alpha=0.4)
     
     # Agregar barra de colores
     cbar = plt.colorbar(sc, ax=ax)
@@ -75,5 +77,35 @@ def plot_shot_map(df):
     
     # Título del gráfico
     ax.set_title("Mapa de disparos", fontsize=14)
+    
+    return fig
+
+def plot_goal_vs_miss(df):
+    # Crear el campo de fútbol
+    pitch = Pitch(pitch_type='opta', line_color='black')
+    fig, ax = pitch.draw(figsize=(10, 6))
+    
+    # Filtrar goles y no goles
+    df_goal = df[df["NaEventType"] == "Goal"]
+    df_miss = df[df["NaEventType"] == "Attempt Saved"]
+    
+    # Escalar el tamaño de los puntos
+    def scale_size(proba, min_size=50, max_size=300):
+        return min_size + (max_size - min_size) * proba
+    
+    df_goal["size"] = df_goal["pred_proba"].apply(scale_size)
+    df_miss["size"] = df_miss["pred_proba"].apply(scale_size)
+    
+    # Graficar los goles en verde
+    ax.scatter(df_goal["x"], df_goal["y"], color='green', s=df_goal["size"], alpha=0.6, edgecolors='black', label='Gol')
+    
+    # Graficar los no goles en rojo
+    ax.scatter(df_miss["x"], df_miss["y"], color='red', s=df_miss["size"], alpha=0.6, edgecolors='black', label='No Gol')
+    
+    # Agregar leyenda
+    ax.legend()
+    
+    # Título del gráfico
+    ax.set_title("Disparos: Goles vs Atajadas", fontsize=14)
     
     return fig
