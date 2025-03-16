@@ -112,9 +112,9 @@ def plot_goal_vs_miss(df):
     return fig
 
 # Función para generar el heatmap de rendimiento esperado
-def plot_performance_heatmap(df):
-    num_bins_y = 6  # Número de divisiones en Y (ancho del arco)
-    num_bins_z = 3   # Número de divisiones en Z (altura del arco)
+def plot_performance_heatmap(df, bins_y, bins_z):
+    num_bins_y = bins_y  # Número de divisiones en Y (ancho del arco)
+    num_bins_z = bins_z   # Número de divisiones en Z (altura del arco)
     
     df['y_bin'] = pd.cut(df['y_end'], bins=num_bins_y, labels=False)
     df['z_bin'] = pd.cut(df['z_end'], bins=num_bins_z, labels=False)
@@ -144,3 +144,46 @@ def plot_performance_heatmap(df):
     ax.invert_yaxis()
     
     return fig
+
+# Función para generar el heatmap de rendimiento esperado
+def plot_performance_heatmap(df, event_list, title_event, bins_y, bins_z, cmap_color):
+
+    df_analysis = df[df['NaEventType'].isin(event_list)]
+
+    # Definir el tamaño de la grilla
+    num_bins_y = bins_y  # Número de divisiones en Y (ancho del arco)
+    num_bins_z = bins_z   # Número de divisiones en Z (altura del arco)
+
+    # Discretizar las coordenadas en cuadrantes
+    df_analysis['y_bin'] = pd.cut(df_analysis['y_end'], bins=num_bins_y, labels=False)
+    df_analysis['z_bin'] = pd.cut(df_analysis['z_end'], bins=num_bins_z, labels=False)
+    heatmap_data = df_analysis.groupby(['z_bin', 'y_bin'])['IdEvent'].count().unstack().fillna(0)
+
+    # Crear la figura y los ejes
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Graficar el heatmap
+    sns.heatmap(
+        heatmap_data, 
+        cmap=cmap_color,
+        annot=True, fmt=".0f", 
+        linewidths=0.5, linecolor='gray'
+    )
+
+    # Ajustar etiquetas y título
+    ax.set_title(f'{title_event} por sector del arco', fontsize=14)
+    
+    # Eliminar los valores y etiquetas de los ejes
+    ax.set_xticks([])  # Eliminar los valores en el eje X
+    ax.set_yticks([])  # Eliminar los valores en el eje Y
+
+    # Eliminar las etiquetas de los ejes
+    ax.set_xlabel('')  # Quitar la etiqueta del eje X
+    ax.set_ylabel('')  # Quitar la etiqueta del eje Y
+
+    # Invertir el eje X para que el arco tenga la orientación correcta
+    ax.invert_xaxis()
+    ax.invert_yaxis()
+
+    # Mostrar el gráfico
+    plt.show()
