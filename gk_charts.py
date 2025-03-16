@@ -135,6 +135,11 @@ def plot_performance_heatmap(df):
     ax.set_title('Rendimiento vs Esperado Según Zona del Arco', fontsize=14)
     ax.set_xticks([])
     ax.set_yticks([])
+    
+    # Eliminar las etiquetas de los ejes
+    ax.set_xlabel('')  # Quitar la etiqueta del eje X
+    ax.set_ylabel('')  # Quitar la etiqueta del eje Y
+    
     ax.invert_xaxis()
     ax.invert_yaxis()
     

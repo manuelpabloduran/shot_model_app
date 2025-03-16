@@ -7,40 +7,44 @@ from gk_charts import *
 from mplsoccer import Pitch
 
 # Título de la aplicación
-st.title("Shot Analysis")
+st.title("⚽ Shot Analysis ⚽")
 
 # Cargar datos
 df = pd.read_csv('historical_shot_model_pred.csv')
-
-# Función para generar el mapa de disparos
-def plot_shot_map(df_model):
-    # Crear el campo de fútbol
-    pitch = Pitch(pitch_type='opta', line_color='black')
-    fig, ax = pitch.draw(figsize=(10, 6))
-    
-    # Graficar los puntos
-    sc = ax.scatter(df_model["x"], df_model["y"], c=df_model["pred_proba"], cmap="RdYlGn", alpha=0.4)
-    
-    # Agregar barra de colores
-    cbar = plt.colorbar(sc, ax=ax)
-    cbar.set_label("Probabilidad de gol")
-    
-    # Título del gráfico
-    ax.set_title("Mapa de disparos", fontsize=14)
-    
-    return fig
 
 # Crear pestañas
 tab1, tab2 = st.tabs(["GoalKeeper Analysis", "Historical Shot Analysis"])
 
 with tab1:
-    st.subheader("GoalKeeper Analysis")
+    st.subheader("🥅 GoalKeeper Analysis 🥅")
     
     # Filtro de selección de portero
-    selected_gk = st.selectbox("Selección de Portero para el análisis", df['NaPlayer_gk'].unique())
+    selected_gk = st.selectbox("Selección de Portero para el análisis", df.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
     
     # Filtrar datos por portero seleccionado
     df_filtered = df[df['NaPlayer_gk'] == selected_gk]
+
+    # Calcular métricas
+    total_shots = df_filtered[df_filtered['NaEventType'].isin(["Goal", "Attempt Saved", "Post"])].shape[0]
+    total_goals = df_filtered[df_filtered['NaEventType'] == "Goal"].shape[0]
+    total_saves = df_filtered[df_filtered['NaEventType'] == "Attempt Saved"].shape[0]
+    effectiveness = total_saves / total_shots if total_shots > 0 else 0
+    total_performance = df_filtered["pred_proba"].sum() - total_goals
+    
+    # Mostrar métricas
+    st.markdown("📈 Estadísticas Generales")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric(label="Total Disparos", value=total_shots)
+        st.metric(label="Total Goles", value=total_goals)
+    
+    with col2:
+        st.metric(label="Total Intentos Salvados", value=total_saves)
+        st.metric(label="Eficacia (%)", value=f"{effectiveness:.2%}")
+    
+    with col3:
+        st.metric(label="Rendimiento Real vs Esperado", value=f"{total_performance:.2f}")
     
     # Crear una disposición en columnas para mostrar los gráficos en la misma fila
     col1, col2 = st.columns(2)
