@@ -54,12 +54,9 @@ with tab1:
         fig_prob_shot_map = plot_shot_map(df_filtered)
         st.pyplot(fig_prob_shot_map)
 
-    #with col2:
-        fig_shot_map = plot_goal_vs_miss(df_filtered)
-        st.pyplot(fig_shot_map)
-    
     with col2:
-        pass
+        fig_shot_map = plot_goal_vs_miss(df_filtered)
+        st.pyplot(fig_shot_map)    
 
 with tab2:
     st.subheader("Historical Shot Analysis")
