@@ -54,7 +54,7 @@ with tab1:
         fig = plot_goalkeeper_analysis(df_filtered)
         st.pyplot(fig)
 
-        fig = plot_performance_heatmap(df_filtered, 'Attempt Saved', "Atajadas", 4, 3, "Greens")
+        fig = plot_event_heatmap(df_filtered, 'Attempt Saved', "Atajadas", 4, 3, "Greens")
         st.pyplot(fig)
         
         # Generar y mostrar el gráfico del mapa de disparos
@@ -65,7 +65,7 @@ with tab1:
         fig = plot_performance_heatmap(df, 4, 3)
         st.pyplot(fig)
 
-        fig = plot_performance_heatmap(df_filtered, 'Goal', "Goles", 4, 3, "Reds")
+        fig = plot_event_heatmap(df_filtered, 'Goal', "Goles", 4, 3, "Reds")
         st.pyplot(fig)
         
         fig_shot_map = plot_goal_vs_miss(df_filtered)
