@@ -26,7 +26,7 @@ with tab1:
     selected_gk = st.selectbox("Selección de Portero para el análisis", df.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
     
     # Filtrar datos por portero seleccionado
-    df_filtered = df[df['NaPlayer_gk'] == selected_gk]
+    df_filtered = df[(df['NaPlayer_gk'] == selected_gk) & (df['NaEventType'] != "Miss")]
 
     # Calcular métricas
     total_shots = df_filtered[df_filtered['NaEventType'].isin(["Goal", "Attempt Saved", "Post"])].shape[0]
