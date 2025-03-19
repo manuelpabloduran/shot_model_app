@@ -77,34 +77,58 @@ with tab1:
 
 with tab2:
     st.subheader("Historical Shot Analysis")
-
-    st.markdown("### Selecciona una posición en el campo")
-
-    # Primera fila: Posición del jugador
-    st.markdown("#### Posición del jugador")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        player_x = st.slider("Posición X del jugador", 0, 100, 50)
-    with col2:
-        player_y = st.slider("Posición Y del jugador", 0, 100, 50)
-
-    # Segunda fila: Posición del portero
-    st.markdown("#### Posición del portero")
-    col3, col4 = st.columns(2)
-    with col3:
-        gk_x = st.slider("Posición X del portero", 0, 100, 50)
-    with col4:
-        gk_y = st.slider("Posición Y del portero", 0, 100, 50)
-
-    # Dibujar el campo de fútbol y mostrar las posiciones seleccionadas
+    # Crear un campo de fútbol interactivo
+    st.markdown("### Selecciona una posición en el campo")
     pitch = Pitch(pitch_type='opta', line_color='black')
     fig, ax = pitch.draw(figsize=(10, 6))
+    
+    # Widget para seleccionar coordenadas
+    player_x = st.slider("Posición X del jugador", 0, 100, 50)
+    player_y = st.slider("Posición Y del jugador", 0, 100, 50)
+    gk_x = st.slider("Posición X del portero", 0, 100, 50)
+    gk_y = st.slider("Posición Y del portero", 0, 100, 50)
+    
+    # Palos del arco
+    x_goal = 100
+    y_post1 = 45.2
+    y_post2 = 54.8
 
-    # Graficar las posiciones seleccionadas
+    # Cálculo de variables
+    distancia_tiro = np.sqrt((x_goal - player_x) ** 2 + (50 - player_y) ** 2)
+    angulo_palo1 = np.arctan2(y_post1 - player_y, x_goal - player_x)
+    angulo_palo2 = np.arctan2(y_post2 - player_y, x_goal - player_x)
+    angulo_vision_arco = np.abs(angulo_palo2 - angulo_palo1)
+    gk_distance_to_player = np.sqrt((player_x - gk_x) ** 2 + (player_y - gk_y) ** 2)
+    gk_distance_to_goal = np.sqrt((gk_x - x_goal) ** 2 + (gk_y - 50) ** 2)
+    y_gk_distance_to_y_player = gk_y - player_y
+
+    # Mostrar métricas calculadas
+    st.markdown("### 📊 Cálculos de Variables")
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric(label="Distancia del Tiro", value=f"{distancia_tiro:.2f} m")
+        st.metric(label="Ángulo Visión al Arco", value=f"{np.degrees(angulo_vision_arco):.2f}°")
+
+    with col2:
+        st.metric(label="Distancia GK a Jugador", value=f"{gk_distance_to_player:.2f} m")
+        st.metric(label="Distancia GK a Arco", value=f"{gk_distance_to_goal:.2f} m")
+
+    with col3:
+        st.metric(label="Distancia Y GK vs Jugador", value=f"{y_gk_distance_to_y_player:.2f} m")
+
+    # Dibujar las posiciones
     ax.scatter(player_x, player_y, color='blue', s=200, label='Jugador')
     ax.scatter(gk_x, gk_y, color='red', s=200, label='Portero')
-    ax.legend()
 
-    # Mostrar el gráfico a todo el ancho
+    # Dibujar el tiro (flecha)
+    pitch.arrows(player_x, player_y, x_goal, 50, color="blue", ax=ax, width=2, headwidth=10, headlength=10, label="Tiro")
+
+    # Dibujar el área del ángulo de visión
+    vision_area = [(player_x, player_y), (x_goal, y_post1), (x_goal, y_post2)]
+    polygon = plt.Polygon(vision_area, color="gray", alpha=0.3, label="Ángulo de visión")
+    ax.add_patch(polygon)
+
+    ax.legend()
     st.pyplot(fig)
