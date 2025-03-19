@@ -89,22 +89,25 @@ with tab2:
     gk_x = st.slider("Posición X del portero", 0, 100, 50)
     gk_y = st.slider("Posición Y del portero", 0, 100, 50)
     
-    # Palos del arco
-    x_goal = 100
-    y_post1 = 45.2
-    y_post2 = 54.8
+    # Escalar coordenadas Y al rango real (de 100 a 70 metros)
+    field_width = 70  # Dimensión real en Y
+    player_y_scaled = (player_y / 100) * field_width
+    gk_y_scaled = (gk_y / 100) * field_width
+    goal_y_center = (50 / 100) * field_width  # Centro del arco escalado
+    y_post1 = (45.2 / 100) * field_width
+    y_post2 = (54.8 / 100) * field_width
 
-    # Cálculo de variables
-    distancia_tiro = np.sqrt((x_goal - player_x) ** 2 + (50 - player_y) ** 2)
-    angulo_palo1 = np.arctan2(y_post1 - player_y, x_goal - player_x)
-    angulo_palo2 = np.arctan2(y_post2 - player_y, x_goal - player_x)
+    # Cálculo de métricas con valores escalados
+    distancia_tiro = np.sqrt((100 - player_x) ** 2 + (goal_y_center - player_y_scaled) ** 2)
+    angulo_palo1 = np.arctan2(y_post1 - player_y_scaled, 100 - player_x)
+    angulo_palo2 = np.arctan2(y_post2 - player_y_scaled, 100 - player_x)
     angulo_vision_arco = np.abs(angulo_palo2 - angulo_palo1)
-    gk_distance_to_player = np.sqrt((player_x - gk_x) ** 2 + (player_y - gk_y) ** 2)
-    gk_distance_to_goal = np.sqrt((gk_x - x_goal) ** 2 + (gk_y - 50) ** 2)
-    y_gk_distance_to_y_player = gk_y - player_y
+    gk_distance_to_player = np.sqrt((player_x - gk_x) ** 2 + (player_y_scaled - gk_y_scaled) ** 2)
+    gk_distance_to_goal = np.sqrt((gk_x - 100) ** 2 + (goal_y_center - gk_y_scaled) ** 2)
+    y_gk_distance_to_y_player = gk_y_scaled - player_y_scaled
 
-    # Mostrar métricas calculadas
-    st.markdown("### 📊 Cálculos de Variables")
+    # Mostrar métricas corregidas
+    st.markdown("### 📊 Cálculos de Variables (ajustados a dimensiones reales)")
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -123,10 +126,10 @@ with tab2:
     ax.scatter(gk_x, gk_y, color='red', s=200, label='Portero')
 
     # Dibujar el tiro (flecha)
-    pitch.arrows(player_x, player_y, x_goal, 50, color="blue", ax=ax, width=2, headwidth=10, headlength=10, label="Tiro")
+    pitch.arrows(player_x, player_y, 100, 50, color="blue", ax=ax, width=2, headwidth=10, headlength=10, label="Tiro")
 
     # Dibujar el área del ángulo de visión
-    vision_area = [(player_x, player_y), (x_goal, y_post1), (x_goal, y_post2)]
+    vision_area = [(player_x, player_y), (100, y_post1), (100, y_post2)]
     polygon = plt.Polygon(vision_area, color="gray", alpha=0.3, label="Ángulo de visión")
     ax.add_patch(polygon)
 
