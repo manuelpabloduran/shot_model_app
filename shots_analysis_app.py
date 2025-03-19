@@ -77,21 +77,34 @@ with tab1:
 
 with tab2:
     st.subheader("Historical Shot Analysis")
-    
-    # Crear un campo de fútbol interactivo
+
     st.markdown("### Selecciona una posición en el campo")
+
+    # Primera fila: Posición del jugador
+    st.markdown("#### Posición del jugador")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        player_x = st.slider("Posición X del jugador", 0, 100, 50)
+    with col2:
+        player_y = st.slider("Posición Y del jugador", 0, 100, 50)
+
+    # Segunda fila: Posición del portero
+    st.markdown("#### Posición del portero")
+    col3, col4 = st.columns(2)
+    with col3:
+        gk_x = st.slider("Posición X del portero", 0, 100, 50)
+    with col4:
+        gk_y = st.slider("Posición Y del portero", 0, 100, 50)
+
+    # Dibujar el campo de fútbol y mostrar las posiciones seleccionadas
     pitch = Pitch(pitch_type='opta', line_color='black')
     fig, ax = pitch.draw(figsize=(10, 6))
-    
-    # Widget para seleccionar coordenadas
-    player_x = st.slider("Posición X del jugador", 50, 100, 50)
-    player_y = st.slider("Posición Y del jugador", 10, 90, 80)
-    gk_x = st.slider("Posición X del portero", 50, 100, 50)
-    gk_y = st.slider("Posición Y del portero", 10, 90, 80)
-    
-    # Mostrar la posición seleccionada
+
+    # Graficar las posiciones seleccionadas
     ax.scatter(player_x, player_y, color='blue', s=200, label='Jugador')
     ax.scatter(gk_x, gk_y, color='red', s=200, label='Portero')
     ax.legend()
-    
+
+    # Mostrar el gráfico a todo el ancho
     st.pyplot(fig)
