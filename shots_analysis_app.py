@@ -77,3 +77,21 @@ with tab1:
 
 with tab2:
     st.subheader("Historical Shot Analysis")
+    
+    # Crear un campo de fútbol interactivo
+    st.markdown("### Selecciona una posición en el campo")
+    pitch = Pitch(pitch_type='opta', line_color='black')
+    fig, ax = pitch.draw(figsize=(10, 6))
+    
+    # Widget para seleccionar coordenadas
+    player_x = st.slider("Posición X del jugador", 50, 100, 50)
+    player_y = st.slider("Posición Y del jugador", 10, 90, 80)
+    gk_x = st.slider("Posición X del portero", 50, 100, 50)
+    gk_y = st.slider("Posición Y del portero", 10, 90, 80)
+    
+    # Mostrar la posición seleccionada
+    ax.scatter(player_x, player_y, color='blue', s=200, label='Jugador')
+    ax.scatter(gk_x, gk_y, color='red', s=200, label='Portero')
+    ax.legend()
+    
+    st.pyplot(fig)
