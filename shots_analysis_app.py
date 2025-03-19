@@ -83,11 +83,21 @@ with tab2:
     pitch = Pitch(pitch_type='opta', line_color='black')
     fig, ax = pitch.draw(figsize=(10, 6))
     
-    # Widget para seleccionar coordenadas
-    player_x = st.slider("Posición X del jugador", 0, 100, 50)
-    player_y = st.slider("Posición Y del jugador", 0, 100, 50)
-    gk_x = st.slider("Posición X del portero", 0, 100, 50)
-    gk_y = st.slider("Posición Y del portero", 0, 100, 50)
+    # Primera fila: Posición del jugador
+    st.markdown("#### Posicion Jugador")
+    col1, col2 = st.columns(2)
+    with col1:
+        player_x = st.slider("Posición X del jugador", 0, 100, 50)
+    with col2:
+        player_y = st.slider("Posición Y del jugador", 0, 100, 50)
+
+    # Segunda fila: Posición del portero
+    st.markdown("#### Posicion Portero")
+    col3, col4 = st.columns(2)
+    with col3:
+        gk_x = st.slider("Posición X del portero", 0, 100, 50)
+    with col4:
+        gk_y = st.slider("Posición Y del portero", 0, 100, 50)
     
     # Palos del arco
     x_goal = 100
