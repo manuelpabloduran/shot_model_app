@@ -123,14 +123,11 @@ with tab2:
     # Primera fila: Posición del jugador
     st.markdown("#### Posicion Jugador")
     col1, col2 = st.columns(2)
+    
     with col1:
         player_x = st.slider("Posición X del jugador", 70, 100, 85)
     with col2:
         player_y = st.slider("Posición Y del jugador", 35, 65, 50)
-    
-    player_zone = classify_pitch_zone_dynamic(player_x, player_y)
-
-    df_shot_zone = df[df['pitch_zone_shot']==player_zone]
 
     # Segunda fila: Posición del portero
     st.markdown("#### Posicion Portero")
@@ -224,6 +221,10 @@ with tab2:
     ax.legend()
     st.pyplot(fig)
 
+    player_zone = classify_pitch_zone_dynamic(player_x, player_y)
+
+    df_shot_zone = df[df['pitch_zone_shot']==player_zone]
+    
     # Mostrar métricas calculadas
     st.markdown("### 📊 Probabilidades del tiro")
     # Crear columnas para los gráficos
