@@ -14,11 +14,44 @@ from model_functions import *
 bin_y = 6
 bin_z = 3
 
+buckets = {
+    "Palo Corto 1": (88.5, 100, 21, 29),
+    "Palo Corto 2": (88.5, 100, 29, 37),
+    "PP 1": (83, 88.5, 21, 37),
+    
+    "Palo Corto 3": (88.5, 100, 63, 72),
+    "Palo Corto 4": (88.5, 100, 72, 79),
+    "PP 5": (83, 88.5, 63, 79),
+
+    "PP 4": (83, 88.5, 54.33, 63),
+    "2do Palo Área": (88.5, 94, 54.33, 63),
+    "PP 3": (83, 88.5, 45.66, 54.33),
+    "Zona Central": (88.5, 94, 45.66, 54.33),
+    "PP 2": (83, 88.5, 37, 45.66),
+    "1er Palo Área": (88.5, 94, 37, 45.66),
+
+    "2do Palo": (94, 100, 54.33, 63),
+    "Zona GK": (94, 100, 45.66, 54.33),
+    "1er Palo": (94, 100, 37, 45.66),
+    "Zona Lateral 1": (70, 83, 0, 21),
+    "Zona Corner 1": (83, 100, 0, 21),
+    "Zona Corner 2": (83, 100, 79, 100),
+    "Zona Lateral 2": (70, 83, 79, 100),
+    "Frontal 1": (70, 83, 21, 37),
+    "Frontal 2": (70, 83, 37, 63),
+    "Frontal 3": (70, 83, 63, 79)
+}
+
 # Título de la aplicación
 st.title("⚽ Shot Analysis ⚽")
 
 # Cargar datos
 df = pd.read_csv('historical_shot_model_pred.csv')
+
+# Aplicar la clasificación a las coordenadas del tiro
+df["pitch_zone_shot"] = df.apply(
+    lambda row: classify_pitch_zone_dynamic(row["x"], row["y"]), axis=1
+)
 
 # Crear pestañas
 tab1, tab2 = st.tabs(["GoalKeeper Analysis", "Historical Shot Analysis"])
@@ -94,6 +127,10 @@ with tab2:
         player_x = st.slider("Posición X del jugador", 70, 100, 85)
     with col2:
         player_y = st.slider("Posición Y del jugador", 35, 65, 50)
+    
+    player_zone = classify_pitch_zone_dynamic(player_x, player_y)
+
+    df_shot_zone = df[df['pitch_zone_shot']==player_zone]
 
     # Segunda fila: Posición del portero
     st.markdown("#### Posicion Portero")
@@ -130,21 +167,21 @@ with tab2:
         ])
 
     # Crear el DataFrame
-    df = pd.DataFrame(data, columns=[
+    df_model = pd.DataFrame(data, columns=[
         'x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end', 'z_end',
         'x_gk', 'y_gk', 'gk_distance_to_player', 'gk_distance_to_goal'
     ])
 
-    df['x_end'] = 100
+    df_model['x_end'] = 100
 
     # Aplicar la función a todo el DataFrame
-    df['gk_dist_to_shot_line_proy'] = df.apply(
+    df_model['gk_dist_to_shot_line_proy'] = df_model.apply(
         lambda row: gk_distance_to_shot(row['x'], row['y'], row['x_end'], row['y_end'], row['x_gk'], row['y_gk']), axis=1
     )
 
-    df['gk_dist_to_shot_line_proy'] = df['gk_dist_to_shot_line_proy'].fillna(df['gk_dist_to_shot_line_proy'].max())
+    df_model['gk_dist_to_shot_line_proy'] = df_model['gk_dist_to_shot_line_proy'].fillna(df_model['gk_dist_to_shot_line_proy'].max())
 
-    df = df[['x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end', 'z_end',
+    df_model = df_model[['x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end', 'z_end',
         'gk_dist_to_shot_line_proy', 'x_gk', 'y_gk', 'gk_distance_to_player',
         'gk_distance_to_goal']]
     
@@ -152,10 +189,10 @@ with tab2:
     with open("model_goal_proba_prediction.pkl", "rb") as f:
         loaded_model = pickle.load(f)
 
-    df_prediction = df.copy()
+    df_prediction = df_model.copy()
 
-    df_prediction['pred'] = loaded_model.predict(df)
-    df_prediction['model_proba'] = loaded_model.predict_proba(df)[:, 1]
+    df_prediction['pred'] = loaded_model.predict(df_model)
+    df_prediction['model_proba'] = loaded_model.predict_proba(df_model)[:, 1]
 
     # Mostrar métricas calculadas
     st.markdown("### 📊 Cálculos de Variables")
@@ -196,6 +233,26 @@ with tab2:
         fig = plot_success_probability_heatmap(df_prediction, num_bins_y=18, num_bins_z=6)
         st.pyplot(fig)
 
+        # Generar y mostrar el gráfico del análisis del portero
+        fig = plot_goalkeeper_analysis(df_shot_zone)
+        st.pyplot(fig)
+
+        fig = plot_event_heatmap(df_shot_zone, 'Attempt Saved', "Atajadas", bin_y, bin_z, "Greens")
+        st.pyplot(fig)
+        
+        # Generar y mostrar el gráfico del mapa de disparos
+        fig_prob_shot_map = plot_shot_map(df_shot_zone)
+        st.pyplot(fig_prob_shot_map)
+
     with col2:
         fig = plot_interpolated_probability_contour(df_prediction, num_bins_y=18, num_bins_z=6)
         st.pyplot(fig)
+
+        fig = plot_performance_heatmap(df_shot_zone, bin_y, bin_z)
+        st.pyplot(fig)
+
+        fig = plot_event_heatmap(df_shot_zone, 'Goal', "Goles", bin_y, bin_z, "Reds")
+        st.pyplot(fig)
+        
+        fig_shot_map = plot_goal_vs_miss(df_shot_zone)
+        st.pyplot(fig_shot_map)   

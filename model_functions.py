@@ -120,3 +120,39 @@ def plot_interpolated_probability_contour(df, num_bins_y=18, num_bins_z=6):
     ax.invert_xaxis()
 
     return fig
+
+# Función para clasificar las coordenadas dentro de los buckets correctos según el lado del córner
+buckets = {
+    "Palo Corto 1": (88.5, 100, 21, 29),
+    "Palo Corto 2": (88.5, 100, 29, 37),
+    "PP 1": (83, 88.5, 21, 37),
+    
+    "Palo Corto 3": (88.5, 100, 63, 72),
+    "Palo Corto 4": (88.5, 100, 72, 79),
+    "PP 5": (83, 88.5, 63, 79),
+
+    "PP 4": (83, 88.5, 54.33, 63),
+    "2do Palo Área": (88.5, 94, 54.33, 63),
+    "PP 3": (83, 88.5, 45.66, 54.33),
+    "Zona Central": (88.5, 94, 45.66, 54.33),
+    "PP 2": (83, 88.5, 37, 45.66),
+    "1er Palo Área": (88.5, 94, 37, 45.66),
+
+    "2do Palo": (94, 100, 54.33, 63),
+    "Zona GK": (94, 100, 45.66, 54.33),
+    "1er Palo": (94, 100, 37, 45.66),
+    "Zona Lateral 1": (70, 83, 0, 21),
+    "Zona Corner 1": (83, 100, 0, 21),
+    "Zona Corner 2": (83, 100, 79, 100),
+    "Zona Lateral 2": (70, 83, 79, 100),
+    "Frontal 1": (70, 83, 21, 37),
+    "Frontal 2": (70, 83, 37, 63),
+    "Frontal 3": (70, 83, 63, 79)
+}
+
+def classify_pitch_zone_dynamic(x, y):    
+    # Buscar en qué zona cae el punto
+    for zone, (x_min, x_max, y_min, y_max) in buckets.items():
+        if x_min <= x <= x_max and y_min <= y <= y_max:
+            return zone
+    return "Fuera de zona"
