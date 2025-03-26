@@ -6,5 +6,4 @@ seaborn
 plotly
 mplsoccer
 streamlit
-xgboost
 pickle
