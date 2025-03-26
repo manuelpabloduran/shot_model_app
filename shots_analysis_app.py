@@ -238,7 +238,7 @@ with tab2:
         fig = plot_goalkeeper_analysis(df_shot_zone)
         st.pyplot(fig)
 
-        fig = plot_event_heatmap(df_shot_zone[df_shot_zone['NaEventType'].isin(['Attempt Saved'])], "Errados", bin_y, bin_z, "Reds")
+        fig = plot_event_heatmap(df_shot_zone[df_shot_zone['NaEventType'].isin(['Attempt Saved', 'Post'])], "Errados", bin_y, bin_z, "Reds")
         st.pyplot(fig)
         
         # Generar y mostrar el gráfico del mapa de disparos
