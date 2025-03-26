@@ -149,7 +149,14 @@ with tab2:
         'gk_distance_to_goal']]
     
     # Cargar el modelo
-    
+    #with open("model_goal_proba_prediction.pkl", "rb") as f:
+    #    loaded_model = pickle.load(f)
+
+    #df_prediction = df.copy()
+
+    #df_prediction['pred'] = loaded_model.predict(df)
+    #df_prediction['model_proba'] = loaded_model.predict_proba(df)[:, 1]
+
     # Mostrar métricas calculadas
     st.markdown("### 📊 Cálculos de Variables")
     col1, col2, col3 = st.columns(3)
