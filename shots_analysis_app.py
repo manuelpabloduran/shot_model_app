@@ -91,17 +91,17 @@ with tab2:
     st.markdown("#### Posicion Jugador")
     col1, col2 = st.columns(2)
     with col1:
-        player_x = st.slider("Posición X del jugador", 0, 100, 50)
+        player_x = st.slider("Posición X del jugador", 70, 100, 30)
     with col2:
-        player_y = st.slider("Posición Y del jugador", 0, 100, 50)
+        player_y = st.slider("Posición Y del jugador", 35, 65, 30)
 
     # Segunda fila: Posición del portero
     st.markdown("#### Posicion Portero")
     col3, col4 = st.columns(2)
     with col3:
-        gk_x = st.slider("Posición X del portero", 0, 100, 50)
+        gk_x = st.slider("Posición X del portero", 80, 100, 20)
     with col4:
-        gk_y = st.slider("Posición Y del portero", 0, 100, 50)
+        gk_y = st.slider("Posición Y del portero", 35, 65, 30)
     
     # Palos del arco
     x_goal = 100
@@ -193,11 +193,9 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("### Heatmap de Probabilidad")
         fig = plot_success_probability_heatmap(df_prediction, num_bins_y=18, num_bins_z=6)
         st.pyplot(fig)
 
     with col2:
-        st.markdown("### Mapa Interpolado de Probabilidad")
         fig = plot_interpolated_probability_contour(df_prediction, num_bins_y=18, num_bins_z=6)
         st.pyplot(fig)
