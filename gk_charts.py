@@ -146,18 +146,16 @@ def plot_performance_heatmap(df, bins_y, bins_z):
     return fig
 
 # Función para generar el heatmap de rendimiento esperado
-def plot_event_heatmap(df, event, title_event, bins_y, bins_z, cmap_color):
-
-    df_analysis = df[df['NaEventType']==event]
+def plot_event_heatmap(df, title_event, bins_y, bins_z, cmap_color):
 
     # Definir el tamaño de la grilla
     num_bins_y = bins_y  # Número de divisiones en Y (ancho del arco)
     num_bins_z = bins_z   # Número de divisiones en Z (altura del arco)
 
     # Discretizar las coordenadas en cuadrantes
-    df_analysis['y_bin'] = pd.cut(df_analysis['y_end'], bins=num_bins_y, labels=False)
-    df_analysis['z_bin'] = pd.cut(df_analysis['z_end'], bins=num_bins_z, labels=False)
-    heatmap_data = df_analysis.groupby(['z_bin', 'y_bin'])['IdEvent'].count().unstack().fillna(0)
+    df['y_bin'] = pd.cut(df['y_end'], bins=num_bins_y, labels=False)
+    df['z_bin'] = pd.cut(df['z_end'], bins=num_bins_z, labels=False)
+    heatmap_data = df.groupby(['z_bin', 'y_bin'])['IdEvent'].count().unstack().fillna(0)
 
     # Crear la figura y los ejes
     fig, ax = plt.subplots(figsize=(10, 6))
