@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 from mplsoccer import Pitch
 from itertools import product
-import pickle
+#import pickle
 
 from gk_charts import *
 from model_functions import *
