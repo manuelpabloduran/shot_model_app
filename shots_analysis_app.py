@@ -188,12 +188,16 @@ with tab2:
     st.pyplot(fig)
 
     # Mostrar métricas calculadas
-    st.markdown("### 📊 Cálculos de Variables")
-    
-    # Grafico probabilidad portería
-    fig = plot_success_probability_heatmap(df_prediction, num_bins_y=18, num_bins_z=6)
-    st.pyplot(fig)
+    st.markdown("### 📊 Probabilidades del tiro")
+    # Crear columnas para los gráficos
+    col1, col2 = st.columns(2)
 
-    # Grafico probabilidad portería
-    fig = plot_interpolated_probability_contour(df_prediction, num_bins_y=18, num_bins_z=6)
-    st.pyplot(fig)
+    with col1:
+        st.markdown("### Heatmap de Probabilidad")
+        fig = plot_success_probability_heatmap(df_prediction, num_bins_y=18, num_bins_z=6)
+        st.pyplot(fig)
+
+    with col2:
+        st.markdown("### Mapa Interpolado de Probabilidad")
+        fig = plot_interpolated_probability_contour(df_prediction, num_bins_y=18, num_bins_z=6)
+        st.pyplot(fig)
