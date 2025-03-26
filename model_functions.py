@@ -197,7 +197,7 @@ def plot_goal_percentage_heatmap(df, bins_y, bins_z, cmap_color="Greens"):
     sns.heatmap(
         heatmap_data, 
         cmap=cmap_color, 
-        annot=True, fmt=".2f%",  # Aquí se le agrega el "%" a los valores
+        annot=True, fmt=".2%",  # Aquí se le agrega el "%" a los valores
         linewidths=0.5, linecolor='gray',
         cbar_kws={'label': 'Porcentaje de Goles'}
     )
