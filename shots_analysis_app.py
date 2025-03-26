@@ -3,8 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-from gk_charts import *
 from mplsoccer import Pitch
+from itertools import product
+import pickle
+
+from gk_charts import *
+from model_functions import *
 
 # Heatmaps size
 bin_y = 6
@@ -113,6 +117,46 @@ with tab2:
     gk_distance_to_goal = np.sqrt((gk_x - x_goal) ** 2 + (gk_y - 50) ** 2)
     y_gk_distance_to_y_player = gk_y - player_y
 
+    # Rango de valores para y_end y z_end
+    y_end_values = np.arange(45.2, 54.9, 1)  # de 45.2 a 54.8 con paso de 1
+    z_end_values = np.arange(0, 34.8, 1)  # de 0 a 34 con paso de 1
+
+    # Generar todas las combinaciones posibles
+    data = []
+    for y_end, z_end in product(y_end_values, z_end_values):
+        data.append([
+            player_x, player_y, distancia_tiro, angulo_vision_arco, y_end, z_end,
+            gk_x, gk_y, gk_distance_to_player, gk_distance_to_goal
+        ])
+
+    # Crear el DataFrame
+    df = pd.DataFrame(data, columns=[
+        'x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end', 'z_end',
+        'x_gk', 'y_gk', 'gk_distance_to_player', 'gk_distance_to_goal'
+    ])
+
+    df['x_end'] = 100
+
+    # Aplicar la función a todo el DataFrame
+    df['gk_dist_to_shot_line_proy'] = df.apply(
+        lambda row: gk_distance_to_shot(row['x'], row['y'], row['x_end'], row['y_end'], row['x_gk'], row['y_gk']), axis=1
+    )
+
+    df['gk_dist_to_shot_line_proy'] = df['gk_dist_to_shot_line_proy'].fillna(df['gk_dist_to_shot_line_proy'].max())
+
+    df = df[['x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end', 'z_end',
+        'gk_dist_to_shot_line_proy', 'x_gk', 'y_gk', 'gk_distance_to_player',
+        'gk_distance_to_goal']]
+    
+    # Cargar el modelo
+    with open("model_goal_proba_prediction.pkl", "rb") as f:
+        loaded_model = pickle.load(f)
+
+    df_prediction = df.copy()
+
+    df_prediction['pred'] = loaded_model.predict(df)
+    df_prediction['model_proba'] = loaded_model.predict_proba(df)[:, 1]
+
     # Mostrar métricas calculadas
     st.markdown("### 📊 Cálculos de Variables")
     col1, col2, col3 = st.columns(3)
@@ -141,4 +185,8 @@ with tab2:
     ax.add_patch(polygon)
 
     ax.legend()
+    st.pyplot(fig)
+
+    # Grafico probabilidad portería
+    fig = plot_success_probability_heatmap(df_prediction, num_bins_y=18, num_bins_z=6)
     st.pyplot(fig)
