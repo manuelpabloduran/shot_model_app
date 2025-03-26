@@ -6,5 +6,3 @@ seaborn
 plotly
 mplsoccer
 streamlit
-pickle
-xgboost==2.1.1
