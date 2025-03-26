@@ -9,6 +9,7 @@ import pickle
 
 from gk_charts import *
 from model_functions import *
+import xgboost as xgb
 
 # Heatmaps size
 bin_y = 6
@@ -149,13 +150,13 @@ with tab2:
         'gk_distance_to_goal']]
     
     # Cargar el modelo
-    '''with open("model_goal_proba_prediction.pkl", "rb") as f:
+    with open("model_goal_proba_prediction.pkl", "rb") as f:
         loaded_model = pickle.load(f)
 
     df_prediction = df.copy()
 
     df_prediction['pred'] = loaded_model.predict(df)
-    df_prediction['model_proba'] = loaded_model.predict_proba(df)[:, 1]'''
+    df_prediction['model_proba'] = loaded_model.predict_proba(df)[:, 1]
 
     # Mostrar métricas calculadas
     st.markdown("### 📊 Cálculos de Variables")
