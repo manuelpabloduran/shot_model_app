@@ -156,3 +156,55 @@ def classify_pitch_zone_dynamic(x, y):
         if x_min <= x <= x_max and y_min <= y <= y_max:
             return zone
     return "Fuera de zona"
+
+def plot_goal_percentage_heatmap(df, bins_y, bins_z, cmap_color="Greens"):
+    """
+    Genera un heatmap de porcentaje de goles en cada zona del arco con respecto al total de goles.
+
+    Parámetros:
+    df : DataFrame
+        DataFrame con las columnas ['y_end', 'z_end', 'NaEventType'].
+    bins_y : int
+        Número de divisiones en Y (ancho del arco).
+    bins_z : int
+        Número de divisiones en Z (altura del arco).
+    cmap_color : str
+        Color del mapa de calor.
+    """
+    # Discretizar las coordenadas en cuadrantes
+    df['y_bin'] = pd.cut(df['y_end'], bins=bins_y, labels=False)
+    df['z_bin'] = pd.cut(df['z_end'], bins=bins_z, labels=False)
+
+    # Filtrar solo los goles
+    df_goals = df[df['NaEventType'] == 'Goal']
+
+    # Contar el total de goles
+    total_goals = df_goals.shape[0]
+
+    # Contar goles por cada bin
+    goals_per_bin = df_goals.groupby(['z_bin', 'y_bin']).size()
+
+    # Normalizar para obtener el porcentaje respecto al total de goles
+    goal_percentage_per_bin = (goals_per_bin / total_goals) * 100
+
+    # Crear un DataFrame con los porcentajes
+    heatmap_data = goal_percentage_per_bin.unstack().fillna(0)
+
+    # Crear la figura y los ejes
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Graficar el heatmap
+    sns.heatmap(
+        heatmap_data, 
+        cmap=cmap_color, 
+        annot=True, fmt=".2f", 
+        linewidths=0.5, linecolor='gray',
+        cbar_kws={'label': 'Porcentaje de Goles'}
+    )
+
+    # Ajustar etiquetas y título
+    ax.set_title(f'Porcentaje de Goles por Zona del Arco', fontsize=14)
+    ax.invert_xaxis()
+    ax.invert_yaxis()
+
+    return fig
