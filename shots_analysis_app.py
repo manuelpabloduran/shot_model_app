@@ -91,17 +91,17 @@ with tab2:
     st.markdown("#### Posicion Jugador")
     col1, col2 = st.columns(2)
     with col1:
-        player_x = st.slider("Posición X del jugador", 70, 100, 30)
+        player_x = st.slider("Posición X del jugador", 70, 100, 85)
     with col2:
-        player_y = st.slider("Posición Y del jugador", 35, 65, 30)
+        player_y = st.slider("Posición Y del jugador", 35, 65, 50)
 
     # Segunda fila: Posición del portero
     st.markdown("#### Posicion Portero")
     col3, col4 = st.columns(2)
     with col3:
-        gk_x = st.slider("Posición X del portero", 80, 100, 20)
+        gk_x = st.slider("Posición X del portero", 80, 100, 95)
     with col4:
-        gk_y = st.slider("Posición Y del portero", 35, 65, 30)
+        gk_y = st.slider("Posición Y del portero", 35, 65, 50)
     
     # Palos del arco
     x_goal = 100
