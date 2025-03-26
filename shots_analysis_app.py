@@ -139,8 +139,8 @@ with tab2:
     
     # Palos del arco
     x_goal = 100
-    y_post1 = 45.2
-    y_post2 = 54.8
+    y_post1 = 45.8
+    y_post2 = 54.2
 
     # Cálculo de variables
     distancia_tiro = np.sqrt((x_goal - player_x) ** 2 + (50 - player_y) ** 2)
