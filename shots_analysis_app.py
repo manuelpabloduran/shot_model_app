@@ -149,8 +149,8 @@ with tab2:
         'gk_distance_to_goal']]
     
     # Cargar el modelo
-    #with open("model_goal_proba_prediction.pkl", "rb") as f:
-    #    loaded_model = pickle.load(f)
+    with open("model_goal_proba_prediction.pkl", "rb") as f:
+        loaded_model = pickle.load(f)
 
     #df_prediction = df.copy()
 
