@@ -7,4 +7,4 @@ plotly
 mplsoccer
 streamlit
 pickle
-xgboost
+xgboost==1.7.6
