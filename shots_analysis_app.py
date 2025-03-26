@@ -242,7 +242,7 @@ with tab2:
         st.pyplot(fig)
         
         # Generar y mostrar el gráfico del mapa de disparos
-        fig_prob_shot_map = plot_shot_map(df_shot_zone)
+        fig_prob_shot_map = plot_goal_percentage_heatmap(df_shot_zone[df_shot_zone['NaEventType'].isin(['Goal'])], bin_y, bin_z, "Greens")
         st.pyplot(fig_prob_shot_map)
 
     with col2:
