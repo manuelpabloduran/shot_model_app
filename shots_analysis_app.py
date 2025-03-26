@@ -187,6 +187,15 @@ with tab2:
     ax.legend()
     st.pyplot(fig)
 
-    # Grafico probabilidad portería
-    fig = plot_success_probability_heatmap(df_prediction, num_bins_y=18, num_bins_z=6)
-    st.pyplot(fig)
+    # Mostrar métricas calculadas
+    st.markdown("### 📊 Cálculos de Variables")
+    col1, col2 = st.columns(2)
+    with col1:
+        # Grafico probabilidad portería
+        fig = plot_success_probability_heatmap(df_prediction, num_bins_y=18, num_bins_z=6)
+        st.pyplot(fig)
+    
+    with col2:
+        # Grafico probabilidad portería
+        fig = plot_interpolated_probability_contour(df_prediction, num_bins_y=18, num_bins_z=6)
+        st.pyplot(fig)
