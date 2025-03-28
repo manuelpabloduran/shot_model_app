@@ -111,6 +111,10 @@ with tab1:
         
         fig_shot_map = plot_goal_vs_miss(df_filtered)
         st.pyplot(fig_shot_map)    
+    
+    fig_gk_perf_map = plot_gk_performance_map(df_filtered)
+    st.pyplot(fig_gk_perf_map)
+    
 
 with tab2:
     st.subheader("Historical Shot Analysis")
