@@ -334,6 +334,6 @@ def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
     cbar.set_label(f"Cantidad de {name_event}", fontsize=12)
 
     # Título del gráfico
-    ax.set_title(f"Mapa de Atajadas", fontsize=15)
+    ax.set_title(f"Mapa de {name_event}", fontsize=15)
 
     return fig
