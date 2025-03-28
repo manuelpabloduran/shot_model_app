@@ -4,6 +4,8 @@ import numpy as np
 from PIL import Image
 from mplsoccer import VerticalPitch, Pitch, PyPizza, add_image, FontManager
 import seaborn as sns
+import matplotlib.patches as patches
+from matplotlib.colors import TwoSlopeNorm
 
 # Función para generar el gráfico
 def plot_goalkeeper_analysis(df_filtered):
@@ -187,4 +189,80 @@ def plot_event_heatmap(df, title_event, bins_y, bins_z, cmap_color):
     ax.invert_yaxis()
 
     # Mostrar el gráfico
+    return fig
+
+def plot_gk_performance_map(df_gk):
+    """
+    Genera un gráfico de rendimiento real vs esperado para el arquero.
+
+    Parámetros:
+    df_gk : DataFrame
+        DataFrame con las columnas ['x_gk', 'y_gk', 'diff'].
+    player : str
+        Nombre del arquero a analizar.
+    """
+
+    # Definir las zonas del campo
+    buckets_gk = {
+        "Área Penalti 1": (88, 91, 54.33, 63),
+        "Zona Penalti 2": (88, 91, 45.66, 54.33),
+        "Área Penalti 3": (88, 91, 37, 45.66),
+        "Área Penalti 4": (91, 94, 54.33, 63),
+        "Zona Penalti 5": (91, 94, 45.66, 54.33),
+        "Área Penalti 6": (91, 94, 37, 45.66),
+        "Área Chica 1": (97, 100, 37, 45.66),
+        "Área Chica 2": (97, 100, 45.66, 48.55),
+        "Área Chica 3": (97, 100, 48.55, 51.44),
+        "Área Chica 4": (97, 100, 51.44, 54.33),
+        "Área Chica 5": (97, 100, 54.33, 63),
+        "Área Chica 6": (94, 97, 37, 45.66),
+        "Área Chica 7": (94, 97, 45.66, 54.33),
+        "Área Chica 8": (94, 97, 54.33, 63)
+    }
+
+    # Clasificar las zonas del arquero
+    def classify_pitch_zone(x, y):
+        for zone, (x_min, x_max, y_min, y_max) in buckets_gk.items():
+            if x_min <= x <= x_max and y_min <= y <= y_max:
+                return zone
+        return "Fuera de zona"
+
+    # Aplicar la clasificación al DataFrame
+    df_gk["pitch_zone_gk"] = df_gk.apply(lambda row: classify_pitch_zone(row["x_gk"], row["y_gk"]), axis=1)
+
+    # Calcular la suma acumulada de "diff" por zona
+    zone_values = df_gk.groupby("pitch_zone_gk")["diff"].sum().to_dict()
+
+    # Definir normalización de colores (centrado en 0)
+    vmin, vmax = min(zone_values.values()), max(zone_values.values())
+    norm = TwoSlopeNorm(vmin=vmin, vcenter=0, vmax=vmax)
+
+    # Dibujar el campo
+    pitch = Pitch(pitch_type='opta', pitch_color='white', line_color='black',
+                  stripe=False, corner_arcs=True, goal_type='box', half=True)
+    fig, ax = pitch.draw(figsize=(14, 10))
+
+    # Dibujar cada zona en el campo
+    for zone, (x_min, x_max, y_min, y_max) in buckets_gk.items():
+        value = zone_values.get(zone, 0)  # Si no hay datos, asignar 0
+        if value >= 1.0:
+            value -= 1  # Ajuste visual opcional
+
+        color = plt.cm.RdYlGn(norm(value))  # Color basado en el rendimiento
+        rect = patches.Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, 
+                                 linewidth=1.5, edgecolor='black', facecolor=color, alpha=0.7)
+        ax.add_patch(rect)
+
+        # Mostrar el valor dentro de la zona
+        ax.text((x_min + x_max) / 2, (y_min + y_max) / 2, f"{value:.1f}",
+                ha="center", va="center", fontsize=10, color="black")
+
+    # Agregar barra de color
+    sm = plt.cm.ScalarMappable(cmap="RdYlGn", norm=norm)
+    cbar = plt.colorbar(sm, ax=ax, fraction=0.03, pad=0.04)
+    cbar.set_label("Diferencia Rendimiento Real vs Esperado", fontsize=12)
+
+    # Título del gráfico
+    ax.set_title(f"Rendimiento Real vs Esperado", fontsize=15)
+
     return fig
