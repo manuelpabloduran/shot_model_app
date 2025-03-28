@@ -245,8 +245,6 @@ def plot_gk_performance_map(df_gk):
     # Dibujar cada zona en el campo
     for zone, (x_min, x_max, y_min, y_max) in buckets_gk.items():
         value = zone_values.get(zone, 0)  # Si no hay datos, asignar 0
-        if value >= 1.0:
-            value -= 1  # Ajuste visual opcional
 
         color = plt.cm.RdYlGn(norm(value))  # Color basado en el rendimiento
         rect = patches.Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, 
@@ -264,5 +262,78 @@ def plot_gk_performance_map(df_gk):
 
     # Título del gráfico
     ax.set_title(f"Rendimiento Real vs Esperado", fontsize=15)
+
+    return fig
+
+import matplotlib.patches as patches
+from matplotlib.colors import TwoSlopeNorm
+
+def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
+    """
+    Genera un gráfico de calor de atajadas del arquero por zona.
+
+    Parámetros:
+    df_gk : DataFrame
+        DataFrame con las columnas ['x_gk', 'y_gk', 'NaEventType', 'IdEvent'].
+    player : str
+        Nombre del arquero a analizar.
+    cmap_name : str, opcional
+        Nombre del colormap de Matplotlib a utilizar (por defecto "Greens").
+    """
+
+    # Definir zonas del campo
+    buckets_gk = {
+        "Área Penalti 1": (88, 91, 54.33, 63),
+        "Zona Penalti 2": (88, 91, 45.66, 54.33),
+        "Área Penalti 3": (88, 91, 37, 45.66),
+        "Área Penalti 4": (91, 94, 54.33, 63),
+        "Zona Penalti 5": (91, 94, 45.66, 54.33),
+        "Área Penalti 6": (91, 94, 37, 45.66),
+        "Área Chica 1": (97, 100, 37, 45.66),
+        "Área Chica 2": (97, 100, 45.66, 48.55),
+        "Área Chica 3": (97, 100, 48.55, 51.44),
+        "Área Chica 4": (97, 100, 51.44, 54.33),
+        "Área Chica 5": (97, 100, 54.33, 63),
+        "Área Chica 6": (94, 97, 37, 45.66),
+        "Área Chica 7": (94, 97, 45.66, 54.33),
+        "Área Chica 8": (94, 97, 54.33, 63)
+    }
+
+    # Calcular la cantidad de atajadas por zona
+    zone_values = df.groupby("pitch_zone_gk")["IdEvent"].count().to_dict()
+
+    # Definir normalización de colores (centrado en vmax/2)
+    vmin, vmax = min(zone_values.values(), default=0), max(zone_values.values(), default=1)
+    norm = TwoSlopeNorm(vmin=vmin, vcenter=vmax/2, vmax=vmax)
+
+    # Dibujar el campo
+    pitch = Pitch(pitch_type='opta', pitch_color='white', line_color='black',
+                  stripe=False, corner_arcs=True, goal_type='box', half=True)
+    fig, ax = pitch.draw(figsize=(14, 10))
+
+    # Dibujar cada zona en el campo
+    cmap = plt.get_cmap(cmap_name)  # Obtener el colormap
+    for zone, (x_min, x_max, y_min, y_max) in buckets_gk.items():
+        value = zone_values.get(zone, 0)  # Si no hay datos, asignar 0
+
+        # Color en escala de colores elegidos
+        color = cmap(norm(value))
+
+        # Dibujar la zona
+        rect = patches.Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, 
+                                 linewidth=1.5, edgecolor='black', facecolor=color, alpha=0.7)
+        ax.add_patch(rect)
+
+        # Mostrar el valor en la zona
+        ax.text((x_min + x_max) / 2, (y_min + y_max) / 2, f"{value:.0f}",
+                ha="center", va="center", fontsize=10, color="black")
+
+    # Agregar barra de color
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    cbar = plt.colorbar(sm, ax=ax, fraction=0.03, pad=0.04)
+    cbar.set_label(f"Cantidad de {name_event}", fontsize=12)
+
+    # Título del gráfico
+    ax.set_title(f"Mapa de Atajadas", fontsize=15)
 
     return fig

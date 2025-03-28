@@ -114,6 +114,18 @@ with tab1:
     
     fig_gk_perf_map = plot_gk_performance_map(df_filtered)
     st.pyplot(fig_gk_perf_map)
+
+    # Crear una disposición en columnas para mostrar los gráficos en la misma fila
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        fig_gk_perf_map = plot_gk_saves_map(df_filtered[df_filtered['NaEventType']=="Goal"], "Goles", cmap_name="Reds")
+        st.pyplot(fig_gk_perf_map)
+    
+    with col2:
+        fig_gk_perf_map = plot_gk_saves_map(df_filtered[df_filtered['NaEventType']=="Attempt Saved"], "Atajadas", cmap_name="Greens")
+        st.pyplot(fig_gk_perf_map)
+
     
 
 with tab2:
