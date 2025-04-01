@@ -36,11 +36,11 @@ def plot_goalkeeper_analysis(df_filtered):
     ax.imshow(goal_img, extent=[y_post1, y_post2, z_min, z_max], aspect='auto')
     
     # Graficar los goles en rojo con opacidad y tamaño según pred_proba
-    ax.scatter(df_goal['y_end'], df_goal['z_end'], color='red', label='Gol', 
+    ax.scatter(df_goal['Goal_mouth_y_co-ordinate'], df_goal['Goal_mouth_z_co-ordinate'], color='red', label='Gol', 
                s=df_goal['size'], edgecolors='black', alpha=0.6)
     
     # Graficar los intentos salvados en verde con opacidad y tamaño según pred_proba
-    ax.scatter(df_saved['y_end'], df_saved['z_end'], color='green', label='Intento Desviado', 
+    ax.scatter(df_saved['Goal_mouth_y_co-ordinate'], df_saved['Goal_mouth_z_co-ordinate'], color='green', label='Intento Desviado', 
                s=df_saved['size'] * 1.3, edgecolors='black', alpha=0.6)
     
     # Ajustar límites de los ejes
@@ -118,8 +118,8 @@ def plot_performance_heatmap(df, bins_y, bins_z):
     num_bins_y = bins_y  # Número de divisiones en Y (ancho del arco)
     num_bins_z = bins_z   # Número de divisiones en Z (altura del arco)
     
-    df['y_bin'] = pd.cut(df['y_end'], bins=num_bins_y, labels=False)
-    df['z_bin'] = pd.cut(df['z_end'], bins=num_bins_z, labels=False)
+    df['y_bin'] = pd.cut(df['Goal_mouth_y_co-ordinate'], bins=num_bins_y, labels=False)
+    df['z_bin'] = pd.cut(df['Goal_mouth_z_co-ordinate'], bins=num_bins_z, labels=False)
     df['diff'] = df['pred_proba'] - df['outcome']
     
     heatmap_data = df.groupby(['z_bin', 'y_bin'])['diff'].sum().unstack().fillna(0)
@@ -158,8 +158,8 @@ def plot_event_heatmap(df, title_event, bins_y, bins_z, cmap_color):
     num_bins_z = bins_z   # Número de divisiones en Z (altura del arco)
 
     # Discretizar las coordenadas en cuadrantes
-    df['y_bin'] = pd.cut(df['y_end'], bins=num_bins_y, labels=False)
-    df['z_bin'] = pd.cut(df['z_end'], bins=num_bins_z, labels=False)
+    df['y_bin'] = pd.cut(df['Goal_mouth_y_co-ordinate'], bins=num_bins_y, labels=False)
+    df['z_bin'] = pd.cut(df['Goal_mouth_z_co-ordinate'], bins=num_bins_z, labels=False)
     heatmap_data = df.groupby(['z_bin', 'y_bin'])['IdEvent'].count().unstack().fillna(0)
 
     # Crear la figura y los ejes
@@ -197,7 +197,7 @@ def plot_gk_performance_map(df_gk):
 
     Parámetros:
     df_gk : DataFrame
-        DataFrame con las columnas ['x_gk', 'y_gk', 'diff'].
+        DataFrame con las columnas ['GK_X_Coordinate', 'GK_Y_Coordinate', 'diff'].
     player : str
         Nombre del arquero a analizar.
     """
@@ -228,7 +228,7 @@ def plot_gk_performance_map(df_gk):
         return "Fuera de zona"
 
     # Aplicar la clasificación al DataFrame
-    df_gk["pitch_zone_gk"] = df_gk.apply(lambda row: classify_pitch_zone(row["x_gk"], row["y_gk"]), axis=1)
+    df_gk["pitch_zone_gk"] = df_gk.apply(lambda row: classify_pitch_zone(row["GK_X_Coordinate"], row["GK_Y_Coordinate"]), axis=1)
 
     # Calcular la suma acumulada de "diff" por zona
     zone_values = df_gk.groupby("pitch_zone_gk")["diff"].sum().to_dict()
@@ -274,7 +274,7 @@ def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
 
     Parámetros:
     df_gk : DataFrame
-        DataFrame con las columnas ['x_gk', 'y_gk', 'NaEventType', 'IdEvent'].
+        DataFrame con las columnas ['GK_X_Coordinate', 'GK_Y_Coordinate', 'NaEventType', 'IdEvent'].
     player : str
         Nombre del arquero a analizar.
     cmap_name : str, opcional

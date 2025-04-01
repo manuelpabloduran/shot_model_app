@@ -39,15 +39,15 @@ def plot_success_probability_heatmap(df, num_bins_y=18, num_bins_z=6):
     
     Parámetros:
     df : DataFrame
-        DataFrame con las columnas ['y_end', 'z_end', 'model_proba'].
+        DataFrame con las columnas ['Goal_mouth_y_co-ordinate', 'Goal_mouth_z_co-ordinate', 'model_proba'].
     num_bins_y : int
         Número de divisiones en Y (ancho del arco).
     num_bins_z : int
         Número de divisiones en Z (altura del arco).
     """
     # Discretizar las coordenadas en cuadrantes
-    df['y_bin'] = pd.cut(df['y_end'], bins=num_bins_y, labels=False)
-    df['z_bin'] = pd.cut(df['z_end'], bins=num_bins_z, labels=False)
+    df['y_bin'] = pd.cut(df['Goal_mouth_y_co-ordinate'], bins=num_bins_y, labels=False)
+    df['z_bin'] = pd.cut(df['Goal_mouth_z_co-ordinate'], bins=num_bins_z, labels=False)
 
     # Calcular la probabilidad promedio en cada celda del grid
     heatmap_data = df.groupby(['z_bin', 'y_bin'])['model_proba'].mean().unstack()
@@ -78,7 +78,7 @@ def plot_interpolated_probability_contour(df, num_bins_y=18, num_bins_z=6):
 
     Parámetros:
     df : DataFrame
-        DataFrame con las columnas ['y_end', 'z_end', 'model_proba'].
+        DataFrame con las columnas ['Goal_mouth_y_co-ordinate', 'Goal_mouth_z_co-ordinate', 'model_proba'].
     num_bins_y : int
         Número de divisiones en Y (ancho del arco).
     num_bins_z : int
@@ -86,20 +86,20 @@ def plot_interpolated_probability_contour(df, num_bins_y=18, num_bins_z=6):
     """
 
     # Discretizar coordenadas
-    df['y_bin'] = pd.cut(df['y_end'], bins=num_bins_y, labels=False)
-    df['z_bin'] = pd.cut(df['z_end'], bins=num_bins_z, labels=False)
+    df['y_bin'] = pd.cut(df['Goal_mouth_y_co-ordinate'], bins=num_bins_y, labels=False)
+    df['z_bin'] = pd.cut(df['Goal_mouth_z_co-ordinate'], bins=num_bins_z, labels=False)
 
     # Obtener centros de los bins
-    y_centers = df.groupby('y_bin')['y_end'].mean().values
-    z_centers = df.groupby('z_bin')['z_end'].mean().values
+    y_centers = df.groupby('y_bin')['Goal_mouth_y_co-ordinate'].mean().values
+    z_centers = df.groupby('z_bin')['Goal_mouth_z_co-ordinate'].mean().values
 
     # Obtener la malla de los bins
     y_mesh, z_mesh = np.meshgrid(y_centers, z_centers)
     proba_values = df.groupby(['z_bin', 'y_bin'])['model_proba'].mean().unstack().values.flatten()
 
     # Crear una malla más fina
-    y_fine = np.linspace(df['y_end'].min(), df['y_end'].max(), 100)
-    z_fine = np.linspace(df['z_end'].min(), df['z_end'].max(), 100)
+    y_fine = np.linspace(df['Goal_mouth_y_co-ordinate'].min(), df['Goal_mouth_y_co-ordinate'].max(), 100)
+    z_fine = np.linspace(df['Goal_mouth_z_co-ordinate'].min(), df['Goal_mouth_z_co-ordinate'].max(), 100)
     y_fine_mesh, z_fine_mesh = np.meshgrid(y_fine, z_fine)
 
     # Interpolación
@@ -163,7 +163,7 @@ def plot_goal_percentage_heatmap(df, bins_y, bins_z, cmap_color="Greens"):
 
     Parámetros:
     df : DataFrame
-        DataFrame con las columnas ['y_end', 'z_end', 'NaEventType'].
+        DataFrame con las columnas ['y_end', 'Goal_mouth_z_co-ordinate', 'NaEventType'].
     bins_y : int
         Número de divisiones en Y (ancho del arco).
     bins_z : int
@@ -172,8 +172,8 @@ def plot_goal_percentage_heatmap(df, bins_y, bins_z, cmap_color="Greens"):
         Color del mapa de calor.
     """
     # Discretizar las coordenadas en cuadrantes
-    df['y_bin'] = pd.cut(df['y_end'], bins=bins_y, labels=False)
-    df['z_bin'] = pd.cut(df['z_end'], bins=bins_z, labels=False)
+    df['y_bin'] = pd.cut(df['Goal_mouth_y_co-ordinate'], bins=bins_y, labels=False)
+    df['z_bin'] = pd.cut(df['Goal_mouth_z_co-ordinate'], bins=bins_z, labels=False)
 
     # Filtrar solo los goles
     df_goals = df[df['NaEventType'] == 'Goal']
