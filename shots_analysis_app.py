@@ -47,9 +47,10 @@ st.title("⚽ Shot Analysis ⚽")
 
 # Cargar datos
 df = pd.read_csv('historical_shot_model_pred.csv')
+df_new = pd.read_csv('2__model_prediction_nn.csv')
 
 # Aplicar la clasificación a las coordenadas del tiro
-df["pitch_zone_shot"] = df.apply(
+df_new["pitch_zone_shot"] = df_new.apply(
     lambda row: classify_pitch_zone_dynamic(row["x"], row["y"]), axis=1
 )
 
@@ -60,10 +61,10 @@ with tab1:
     st.subheader("🥅 GoalKeeper Analysis 🥅")
     
     # Filtro de selección de portero
-    selected_gk = st.selectbox("Selección de Portero para el análisis", df.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
+    selected_gk = st.selectbox("Selección de Portero para el análisis", df_new.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
     
     # Filtrar datos por portero seleccionado
-    df_filtered = df[(df['NaPlayer_gk'] == selected_gk) & (df['NaEventType'] != "Miss")]
+    df_filtered = df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")]
 
     # Calcular métricas
     total_shots = df_filtered[df_filtered['NaEventType'].isin(["Goal", "Attempt Saved", "Post"])].shape[0]
