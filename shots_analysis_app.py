@@ -49,7 +49,7 @@ st.title("⚽ Shot Analysis ⚽")
 #df = pd.read_csv('historical_shot_model_pred.csv')
 df_new = pd.read_csv('gk_shots_model_predictions.csv')
 
-df_new = df_new[df_new['IdSeason'].isin([2022, 2023, 2024])]
+df_new = df_new[(df_new['IdSeason'].isin([2022, 2023, 2024]))&(df_new['Regular_play']==1)]
 
 # Aplicar la clasificación a las coordenadas del tiro
 df_new["pitch_zone_shot"] = df_new.apply(
