@@ -49,7 +49,7 @@ st.title("⚽ Shot Analysis ⚽")
 #df = pd.read_csv('historical_shot_model_pred.csv')
 df_new = pd.read_csv('gk_shots_model_predictions.csv')
 
-df_new = df_new[(df_new['IdSeason'].isin([2022, 2023, 2024]))&(df_new['Regular_play']==1)]
+df_new = df_new[(df_new['Regular_play']==1)]
 
 # Aplicar la clasificación a las coordenadas del tiro
 df_new["pitch_zone_shot"] = df_new.apply(
@@ -64,6 +64,21 @@ with tab1:
     
     # Filtro de selección de portero
     selected_gk = st.selectbox("Selección de Portero para el análisis", df_new.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
+
+    # 1. Obtener valores únicos de IdSeason
+    season_options = df_new['IdSeason'].unique()
+
+    # 2. Crear un multiselect en Streamlit
+    selected_seasons = st.multiselect("Selecciona Temporadas", season_options, default=season_options)
+
+    # 3. Filtrar el DataFrame con los valores seleccionados
+    df_new = df_new[df_new['IdSeason'].isin(selected_seasons)]
+
+    # 4. Mostrar un mensaje si no hay datos
+    if df_new.empty:
+        st.warning("No hay datos para las temporadas seleccionadas.")
+    else:
+        st.write(f"Se analizarán {len(df_new)} eventos de las temporadas seleccionadas.")
     
     # Filtrar datos por portero seleccionado
     df_filtered = df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")]
