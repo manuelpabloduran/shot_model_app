@@ -46,7 +46,7 @@ buckets = {
 st.title("⚽ Shot Analysis ⚽")
 
 # Cargar datos
-df = pd.read_csv('historical_shot_model_pred.csv')
+#df = pd.read_csv('historical_shot_model_pred.csv')
 df_new = pd.read_csv('gk_shots_model_predictions.csv')
 
 df_new = df_new[df_new['IdSeason'].isin([2022, 2023, 2024])]
@@ -184,25 +184,58 @@ with tab2:
 
     # Crear el DataFrame
     df_model = pd.DataFrame(data, columns=[
-        'x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end', 'z_end',
-        'x_gk', 'y_gk', 'gk_distance_to_player', 'gk_distance_to_goal'
+        'x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end_fixed', 'z_end_fixed',
+        'GK_X_Coordinate', 'GK_Y_Coordinate', 'gk_distance_to_player', 'gk_distance_to_goal'
     ])
 
-    df_model['x_end'] = 100
+    df_model['Small_box'] = 1
+    df_model['box'] = 0
+    df_model['1_on_1'] = 1
+    df_model['Free_kick'] = 0
+    df_model['From_corner'] = 0
+    df_model['Head'] = 0
+    df_model['Right_footed'] = 1
+    df_model['Left_footed'] = 0
+    df_model['Individual_Play'] = 1
+    df_model['Intentional_Assist'] = 0
+    df_model['Penalty'] = 0
+
 
     # Aplicar la función a todo el DataFrame
     df_model['gk_dist_to_shot_line_proy'] = df_model.apply(
-        lambda row: gk_distance_to_shot(row['x'], row['y'], row['x_end'], row['y_end'], row['x_gk'], row['y_gk']), axis=1
+        lambda row: gk_distance_to_shot(row['x'], row['y'], row['x_end'], row['y_end_fixed'], row['GK_X_Coordinate'], row['GK_Y_Coordinate']), axis=1
     )
 
     df_model['gk_dist_to_shot_line_proy'] = df_model['gk_dist_to_shot_line_proy'].fillna(df_model['gk_dist_to_shot_line_proy'].max())
 
-    df_model = df_model[['x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end', 'z_end',
-        'gk_dist_to_shot_line_proy', 'x_gk', 'y_gk', 'gk_distance_to_player',
-        'gk_distance_to_goal']]
+    df_model = df_model[[
+    "x",
+    "y",
+    "distancia_tiro",
+    "angulo_vision_arco",
+    "y_end_fixed",
+    "z_end_fixed",
+    "gk_dist_to_shot_line_proy",
+    'GK_X_Coordinate',
+    'GK_Y_Coordinate',
+    "gk_in_vision",
+    "gk_distance_to_player",
+    "gk_distance_to_goal",
+    "Small_box",
+    "box",
+    "1_on_1",
+    "Free_kick",
+    "From_corner",
+    "Head",
+    "Individual_Play",
+    "Intentional_assist",
+    "Left_footed",
+    "Right_footed",
+    "Penalty"
+]]
     
     # Cargar el modelo
-    with open("model_goal_proba_prediction.pkl", "rb") as f:
+    with open("model_goal_proba_prediction_20250402.pkl", "rb") as f:
         loaded_model = pickle.load(f)
 
     df_prediction = df_model.copy()
@@ -242,7 +275,7 @@ with tab2:
 
     player_zone = classify_pitch_zone_dynamic(player_x, player_y)
 
-    df_shot_zone = df[df['pitch_zone_shot']==player_zone]
+    df_shot_zone = df_new[df_new['pitch_zone_shot']==player_zone]
     
     # Mostrar métricas calculadas
     st.markdown("### 📊 Probabilidades del tiro")
