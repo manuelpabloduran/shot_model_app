@@ -78,7 +78,7 @@ with tab1:
     if df_new.empty:
         st.warning("No hay datos para las temporadas seleccionadas.")
     else:
-        st.write(f"Se analizarán {len(df_new)} eventos de las temporadas seleccionadas.")
+        st.write(f"Se analizarán {len(df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")])} eventos de las temporadas seleccionadas.")
     
     # Filtrar datos por portero seleccionado
     df_filtered = df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")]
