@@ -198,7 +198,7 @@ with tab2:
     df_model['Right_footed'] = 1
     df_model['Left_footed'] = 0
     df_model['Individual_Play'] = 1
-    df_model['Intentional_Assist'] = 0
+    df_model['Intentional_assist'] = 0
     df_model['gk_in_vision'] = 1
     df_model['Penalty'] = 0
 
@@ -212,6 +212,8 @@ with tab2:
 
     features = ["x", "y", "distancia_tiro", "angulo_vision_arco", "y_end_fixed", "z_end_fixed", "gk_dist_to_shot_line_proy", 'GK_X_Coordinate', 'GK_Y_Coordinate', "gk_in_vision", "gk_distance_to_player", "gk_distance_to_goal", "Small_box", "box", "1_on_1", "Free_kick", "From_corner", "Head", "Individual_Play", "Intentional_assist", "Left_footed", "Right_footed", "Penalty"]
     
+    print(df_model.columns)
+
     df_model = df_model[features]
     
     # Cargar el modelo
