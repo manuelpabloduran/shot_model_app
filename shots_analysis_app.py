@@ -11,7 +11,7 @@ from gk_charts import *
 from model_functions import *
 
 # Heatmaps size
-bin_y = 3
+bin_y = 6
 bin_z = 3
 
 buckets = {
@@ -67,17 +67,43 @@ with tab1:
     col1, col2 = st.columns(2)
     
     with col1:
+        ### ONE ON ONE FILTER ###
         one_vs_one = st.checkbox("1 vs 1")
 
         # Aplicar el filtro si el checkbox está activado
         if one_vs_one:
             df_new = df_new[df_new["1_on_1"] == 1]
         
-        regular_play = st.checkbox("Regular Play")
+        ### REGULTAR PLAY FILTER ###
+        
+        filter_regular_play = st.checkbox("Regular Play")
+        filter_penalty = st.checkbox("Penalty")
+        filter_corner = st.checkbox("Corner")
+        filter_free_kick = st.checkbox("Free Kick")
+        filter_assisted = st.checkbox("Assisted")
+        filter_individual_play = st.checkbox("Individual Play")
 
-        # Aplicar el filtro si el checkbox está activado
-        if regular_play:
-            df_new = df_new[df_new["Regular_play"] == 1]
+        # Lista para almacenar condiciones de filtro
+        conditions_play = []
+
+        # Agregar condiciones según los checkboxes seleccionados
+        if filter_regular_play:
+            conditions_play.append(df_new["Regular_play"] == 1)
+        if filter_penalty:
+            conditions_play.append(df_new["Penalty"] == 1)
+        if filter_corner:
+            conditions_play.append(df_new["From_corner"] == 1)
+        if filter_free_kick:
+            conditions_play.append(df_new["Free_kick"] == 1)
+        if filter_assisted:
+            conditions_play.append(df_new["Assisted"] == 1)
+        if filter_individual_play:
+            conditions_play.append(df_new["Individual_Play"] == 1)
+
+        # Aplicar filtro si hay alguna condición seleccionada
+        if conditions_play:
+            df_new = df_new[pd.concat(conditions_play, axis=1).any(axis=1)]
+        
         
     with col2:
 
