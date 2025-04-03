@@ -3,6 +3,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.interpolate import griddata
+from shapely.geometry import Point, Polygon
+import numpy as np
+
+# Función para validar si el portero está en la visión del jugador
+def check_gk_in_vision(player_x, player_y, gk_x, gk_y):
+    x_goal = 100  # Posición X del arco
+    y_min, y_max = 45.2, 54.8  # Límites del arco
+    
+    # Definir el área de visión del arco como un triángulo
+    vision_area = Polygon([(player_x, player_y), (x_goal, y_min), (x_goal, y_max)]) 
+    
+    # Posición del portero
+    gk_position = Point(gk_x, gk_y)
+
+    # Retorna True si el portero está dentro del área de visión
+    return gk_position.within(vision_area)
+
 
 def gk_distance_to_shot(x, y, x_end, y_end, x_gk, y_gk):
     """

@@ -171,6 +171,12 @@ with tab2:
     with col4:
         gk_y = st.slider("Posición Y del portero", 35, 65, 50)
     
+    # Validación: Si el portero no está en la visión, mostrar un warning
+    if not check_gk_in_vision(player_x, player_y, gk_x, gk_y):
+        st.warning("⚠️ El portero no está en la visión del jugador. Ajusta su posición para continuar.")
+    else:
+        st.success("✅")
+    
     # Palos del arco
     x_goal = 100
     y_post1 = 45.2
