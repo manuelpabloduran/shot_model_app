@@ -307,7 +307,7 @@ with tab2:
         fig = plot_performance_heatmap(df_shot_zone, bin_y, bin_z)
         st.pyplot(fig)
 
-        fig = plot_event_heatmap(df_shot_zone[df_shot_zone['NaEventType'].isin(['Attempt Saved', 'Miss', 'Post'])], "Errados (Corrección)", bin_y, bin_z, "Reds")
+        fig = plot_event_heatmap(df_shot_zone[df_shot_zone['NaEventType'].isin(['Attempt Saved', 'Miss', 'Post'])], "Errados (Corrección)", bin_y, bin_z, "Reds", y_col='y_end_fixed', z_col='z_end_fixed')
         st.pyplot(fig)
 
         fig = plot_event_heatmap(df_shot_zone[df_shot_zone['NaEventType'].isin(['Goal'])], "Goles", bin_y, bin_z, "Greens")
