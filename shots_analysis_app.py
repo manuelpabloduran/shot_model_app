@@ -108,7 +108,7 @@ with tab1:
 
         # Aplicar filtro si hay alguna condición seleccionada
         if conditions:
-            df = df[pd.concat(conditions, axis=1).any(axis=1)]
+            df_new = df_new[pd.concat(conditions, axis=1).any(axis=1)]
 
 
     # 4. Mostrar un mensaje si no hay datos
