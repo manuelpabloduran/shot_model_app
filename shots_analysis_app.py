@@ -61,18 +61,24 @@ tab1, tab2 = st.tabs(["GoalKeeper Analysis", "Historical Shot Analysis"])
 
 with tab1:
     st.subheader("🥅 GoalKeeper Analysis 🥅")
+
+    st.markdown("🔍 Selección de Filtros")
+    col1, col2 = st.columns(2)
     
-    # Filtro de selección de portero
-    selected_gk = st.selectbox("Selección de Portero para el análisis", df_new.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
+    with col1:
+        # Filtro de selección de portero
+        selected_gk = st.selectbox("Selección de Portero para el análisis", df_new.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
 
-    # 1. Obtener valores únicos de IdSeason
-    season_options = df_new['IdSeason'].unique()
+    with col2:
 
-    # 2. Crear un multiselect en Streamlit
-    selected_seasons = st.multiselect("Selecciona Temporadas", season_options, default=season_options)
+        # 1. Obtener valores únicos de IdSeason
+        season_options = df_new['IdSeason'].unique()
 
-    # 3. Filtrar el DataFrame con los valores seleccionados
-    df_new = df_new[df_new['IdSeason'].isin(selected_seasons)]
+        # 2. Crear un multiselect en Streamlit
+        selected_seasons = st.multiselect("Selecciona Temporadas", season_options, default=season_options)
+
+        # 3. Filtrar el DataFrame con los valores seleccionados
+        df_new = df_new[df_new['IdSeason'].isin(selected_seasons)]
 
     # 4. Mostrar un mensaje si no hay datos
     if df_new.empty:
