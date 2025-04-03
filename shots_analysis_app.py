@@ -63,12 +63,24 @@ with tab1:
     st.subheader("🥅 GoalKeeper Analysis 🥅")
 
     st.markdown("🔍 Selección de Filtros")
+    # Filtro de selección de portero
+    selected_gk = st.selectbox("Selección de Portero para el análisis", df_new.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
+    
     col1, col2 = st.columns(2)
     
     with col1:
-        # Filtro de selección de portero
-        selected_gk = st.selectbox("Selección de Portero para el análisis", df_new.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
+        one_vs_one = st.checkbox("1 vs 1")
 
+        # Aplicar el filtro si el checkbox está activado
+        if one_vs_one:
+            df_new = df_new[df_new["1_on_1"] == 1]
+        
+        regular_play = st.checkbox("Regular Play")
+
+        # Aplicar el filtro si el checkbox está activado
+        if regular_play:
+            df_new = df_new[df_new["Regular_play"] == 1]
+        
     with col2:
 
         # 1. Obtener valores únicos de IdSeason
@@ -79,6 +91,27 @@ with tab1:
 
         # 3. Filtrar el DataFrame con los valores seleccionados
         df_new = df_new[df_new['IdSeason'].isin(selected_seasons)]
+
+        # Crear checkboxes para cada opción
+        filter_small_box = st.checkbox("Small Box")
+        filter_box = st.checkbox("Box")
+        filter_out_box = st.checkbox("Out of Box")
+
+        # Lista para almacenar condiciones de filtro
+        conditions = []
+
+        # Agregar condiciones según los checkboxes seleccionados
+        if filter_small_box:
+            conditions.append(df_new["Small_box"] == 1)
+        if filter_box:
+            conditions.append(df_new["Box"] == 1)
+        if filter_out_box:
+            conditions.append(df_new["out_of_box"] == 1)
+
+        # Aplicar filtro si hay alguna condición seleccionada
+        if conditions:
+            df = df[pd.concat(conditions, axis=1).any(axis=1)]
+
 
     # 4. Mostrar un mensaje si no hay datos
     if df_new.empty:
