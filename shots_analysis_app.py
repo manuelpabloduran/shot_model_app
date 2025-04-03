@@ -49,8 +49,6 @@ st.title("⚽ Shot Analysis ⚽")
 #df = pd.read_csv('historical_shot_model_pred.csv')
 df_new = pd.read_csv('gk_shots_model_predictions.csv')
 
-df_new = df_new[(df_new['Regular_play']==1)]
-
 # Aplicar la clasificación a las coordenadas del tiro
 df_new["pitch_zone_shot"] = df_new.apply(
     lambda row: classify_pitch_zone_dynamic(row["x"], row["y"]), axis=1
