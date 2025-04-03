@@ -102,7 +102,7 @@ with tab1:
         if filter_small_box:
             conditions.append(df_new["Small_box"] == 1)
         if filter_box:
-            conditions.append(df_new["Box"] == 1)
+            conditions.append(df_new["box"] == 1)
         if filter_out_box:
             conditions.append(df_new["out_of_box"] == 1)
 
