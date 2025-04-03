@@ -82,6 +82,7 @@ with tab1:
         filter_free_kick = st.checkbox("Free Kick")
         filter_assisted = st.checkbox("Assisted")
         filter_individual_play = st.checkbox("Individual Play")
+        filter_big_chance = st.checkbox("Big Chance")
 
         # Lista para almacenar condiciones de filtro
         conditions_play = []
@@ -99,6 +100,8 @@ with tab1:
             conditions_play.append(df_new["Assisted"] == 1)
         if filter_individual_play:
             conditions_play.append(df_new["Individual_Play"] == 1)
+        if filter_big_chance:
+            conditions_play.append(df_new["Big_Chance"] == 1)
 
         # Aplicar filtro si hay alguna condición seleccionada
         if conditions_play:
