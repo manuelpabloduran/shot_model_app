@@ -296,6 +296,14 @@ with tab2:
         # Selectbox para seleccionar una sola opción
         selected_situation_type = st.selectbox("Selecciona situación", assist_type)
 
+        
+        # Asignar 1 a la seleccionada y 0 al resto
+        for play in play_types:
+            df_model[play] = 1 if play == selected_play_type else 0
+        
+        for assist in assist_type:
+            df_model[assist] = 1 if assist == selected_situation_type else 0
+        
     with col6:
         ### ONE ON ONE FILTER ###
         one_vs_one_cb = st.checkbox("1 vs 1")
@@ -312,16 +320,9 @@ with tab2:
         # Selectbox para seleccionar una sola opción
         selected_body_type = st.selectbox("Selecciona Parte del cuerpo para definición", body_part)
 
+        for body in body_part:
+            df_model[body] = 1 if body == selected_body_type else 0
 
-    # Asignar 1 a la seleccionada y 0 al resto
-    for play in play_types:
-        df_model[play] = 1 if play == selected_play_type else 0
-    
-    for assist in assist_type:
-        df_model[assist] = 1 if assist == assist_type else 0
-    
-    for body in body_part:
-        df_model[body] = 1 if body == selected_situation_type else 0
     
 
     # Aplicar la función a todo el DataFrame
