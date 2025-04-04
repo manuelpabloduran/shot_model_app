@@ -11,6 +11,7 @@ from gk_charts import *
 from model_functions import *
 
 # Heatmaps size
+dkslañdkasñld
 bin_y = 6
 bin_z = 3
 
