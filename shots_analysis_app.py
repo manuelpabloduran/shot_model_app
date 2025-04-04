@@ -306,7 +306,7 @@ with tab2:
         
     with col6:
         ### ONE ON ONE FILTER ###
-        one_vs_one_cb = st.checkbox("1 vs 1")
+        one_vs_one_cb = st.checkbox("One vs One")
 
         # Aplicar el filtro si el checkbox está activado
         if one_vs_one_cb:
