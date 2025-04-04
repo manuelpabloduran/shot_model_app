@@ -243,6 +243,31 @@ with tab2:
     else:
         st.success("✅")
     
+    st.markdown("#### Selección de Parámetros")
+    col5, col6 = st.columns(2)
+    with col5:
+        # Lista de opciones
+        play_types = ["Free_kick", "From_corner", "Regular_play"]
+
+        # Selectbox para seleccionar una sola opción
+        selected_play_type = st.selectbox("Selecciona tipo de jugada", play_types)
+
+        # Lista de opciones
+        assist_type = ["Individual_Play", "Intentional_assist"]
+
+        # Selectbox para seleccionar una sola opción
+        selected_situation_type = st.selectbox("Selecciona situación", assist_type)
+
+    with col6:
+        ### ONE ON ONE FILTER ###
+        one_vs_one = st.checkbox("1 vs 1")    
+
+        # Lista de opciones
+        body_part = ["Head", "Left_footed", "Right_footed"]
+
+        # Selectbox para seleccionar una sola opción
+        selected_body_type = st.selectbox("Selecciona Parte del cuerpo para definición", body_part)
+    
     # Palos del arco
     x_goal = 100
     y_post1 = 45.2
@@ -275,17 +300,28 @@ with tab2:
         'GK_X_Coordinate', 'GK_Y_Coordinate', 'gk_distance_to_player', 'gk_distance_to_goal'
     ])
 
+    # Aplicar el filtro si el checkbox está activado
+    if one_vs_one:
+        df_model = df_model[df_model["1_on_1"] == 1]
+    else:
+        df_model = df_model[df_model["1_on_1"] == 0]
+
+    
+
     df_model['x_end'] = 100
-    df_model['Small_box'] = 1
-    df_model['box'] = 0
-    df_model['1_on_1'] = 1
-    df_model['Free_kick'] = 0
-    df_model['From_corner'] = 0
-    df_model['Head'] = 0
-    df_model['Right_footed'] = 1
-    df_model['Left_footed'] = 0
-    df_model['Individual_Play'] = 1
-    df_model['Intentional_assist'] = 0
+    df_model['Small_box'] = 0
+    df_model['box'] = 1
+
+    # Asignar 1 a la seleccionada y 0 al resto
+    for play in play_types:
+        df_model[play] = 1 if play == selected_play_type else 0
+    
+    for assist in assist_type:
+        df_model[assist] = 1 if assist == assist_type else 0
+    
+    for body in body_part:
+        df_model[body] = 1 if body == selected_situation_type else 0
+    
     df_model['gk_in_vision'] = 1
     df_model['Penalty'] = 0
 
