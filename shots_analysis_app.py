@@ -242,6 +242,44 @@ with tab2:
         st.warning("⚠️ El portero no está en la visión del jugador. Ajusta su posición para continuar.")
     else:
         st.success("✅")
+
+        # Palos del arco
+        x_goal = 100
+        y_post1 = 45.2
+        y_post2 = 54.8
+
+        # Cálculo de variables
+        distancia_tiro = np.sqrt((x_goal - player_x) ** 2 + (50 - player_y) ** 2)
+        angulo_palo1 = np.arctan2(y_post1 - player_y, x_goal - player_x)
+        angulo_palo2 = np.arctan2(y_post2 - player_y, x_goal - player_x)
+        angulo_vision_arco = np.abs(angulo_palo2 - angulo_palo1)
+        gk_distance_to_player = np.sqrt((player_x - gk_x) ** 2 + (player_y - gk_y) ** 2)
+        gk_distance_to_goal = np.sqrt((gk_x - x_goal) ** 2 + (gk_y - 50) ** 2)
+        y_gk_distance_to_y_player = gk_y - player_y
+
+        # Rango de valores para y_end y z_end
+        y_end_values = np.arange(45.2, 54.8, 1)  # de 45.2 a 54.8 con paso de 1
+        z_end_values = np.arange(0, 34.8, 1)  # de 0 a 34 con paso de 1
+
+        # Generar todas las combinaciones posibles
+        data = []
+        for y_end, z_end in product(y_end_values, z_end_values):
+            data.append([
+                player_x, player_y, distancia_tiro, angulo_vision_arco, y_end, z_end,
+                gk_x, gk_y, gk_distance_to_player, gk_distance_to_goal
+            ])
+
+        # Crear el DataFrame
+        df_model = pd.DataFrame(data, columns=[
+            'x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end_fixed', 'z_end_fixed',
+            'GK_X_Coordinate', 'GK_Y_Coordinate', 'gk_distance_to_player', 'gk_distance_to_goal'
+        ])
+
+        df_model['x_end'] = 100
+        df_model['Small_box'] = 0
+        df_model['box'] = 1
+        df_model['gk_in_vision'] = 1
+        df_model['Penalty'] = 0
     
     st.markdown("#### Selección de Parámetros")
     col5, col6 = st.columns(2)
@@ -260,51 +298,19 @@ with tab2:
 
     with col6:
         ### ONE ON ONE FILTER ###
-        one_vs_one = st.checkbox("1 vs 1")    
+        one_vs_one_cb = st.checkbox("1 vs 1")
+
+        # Aplicar el filtro si el checkbox está activado
+        if one_vs_one_cb:
+            df_model["1_on_1"] = 1
+        else:
+            df_model["1_on_1"] = 0
 
         # Lista de opciones
         body_part = ["Head", "Left_footed", "Right_footed"]
 
         # Selectbox para seleccionar una sola opción
         selected_body_type = st.selectbox("Selecciona Parte del cuerpo para definición", body_part)
-    
-    # Palos del arco
-    x_goal = 100
-    y_post1 = 45.2
-    y_post2 = 54.8
-
-    # Cálculo de variables
-    distancia_tiro = np.sqrt((x_goal - player_x) ** 2 + (50 - player_y) ** 2)
-    angulo_palo1 = np.arctan2(y_post1 - player_y, x_goal - player_x)
-    angulo_palo2 = np.arctan2(y_post2 - player_y, x_goal - player_x)
-    angulo_vision_arco = np.abs(angulo_palo2 - angulo_palo1)
-    gk_distance_to_player = np.sqrt((player_x - gk_x) ** 2 + (player_y - gk_y) ** 2)
-    gk_distance_to_goal = np.sqrt((gk_x - x_goal) ** 2 + (gk_y - 50) ** 2)
-    y_gk_distance_to_y_player = gk_y - player_y
-
-    # Rango de valores para y_end y z_end
-    y_end_values = np.arange(45.2, 54.8, 1)  # de 45.2 a 54.8 con paso de 1
-    z_end_values = np.arange(0, 34.8, 1)  # de 0 a 34 con paso de 1
-
-    # Generar todas las combinaciones posibles
-    data = []
-    for y_end, z_end in product(y_end_values, z_end_values):
-        data.append([
-            player_x, player_y, distancia_tiro, angulo_vision_arco, y_end, z_end,
-            gk_x, gk_y, gk_distance_to_player, gk_distance_to_goal
-        ])
-
-    # Crear el DataFrame
-    df_model = pd.DataFrame(data, columns=[
-        'x', 'y', 'distancia_tiro', 'angulo_vision_arco', 'y_end_fixed', 'z_end_fixed',
-        'GK_X_Coordinate', 'GK_Y_Coordinate', 'gk_distance_to_player', 'gk_distance_to_goal'
-    ])
-
-    df_model['x_end'] = 100
-    df_model['Small_box'] = 0
-    df_model['box'] = 1
-    df_model['gk_in_vision'] = 1
-    df_model['Penalty'] = 0
 
 
     # Asignar 1 a la seleccionada y 0 al resto
