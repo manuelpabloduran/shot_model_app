@@ -306,11 +306,12 @@ with tab2:
     else:
         df_model = df_model[df_model["1_on_1"] == 0]
 
-    
-
     df_model['x_end'] = 100
     df_model['Small_box'] = 0
     df_model['box'] = 1
+    df_model['gk_in_vision'] = 1
+    df_model['Penalty'] = 0
+
 
     # Asignar 1 a la seleccionada y 0 al resto
     for play in play_types:
@@ -322,9 +323,6 @@ with tab2:
     for body in body_part:
         df_model[body] = 1 if body == selected_situation_type else 0
     
-    df_model['gk_in_vision'] = 1
-    df_model['Penalty'] = 0
-
 
     # Aplicar la función a todo el DataFrame
     df_model['gk_dist_to_shot_line_proy'] = df_model.apply(
