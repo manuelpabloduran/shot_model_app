@@ -300,12 +300,6 @@ with tab2:
         'GK_X_Coordinate', 'GK_Y_Coordinate', 'gk_distance_to_player', 'gk_distance_to_goal'
     ])
 
-    # Aplicar el filtro si el checkbox está activado
-    if one_vs_one:
-        df_model = df_model[df_model["1_on_1"] == 1]
-    else:
-        df_model = df_model[df_model["1_on_1"] == 0]
-
     df_model['x_end'] = 100
     df_model['Small_box'] = 0
     df_model['box'] = 1
