@@ -121,10 +121,11 @@ def plot_performance_heatmap(df, bins_y, bins_z):
     df['y_bin'] = pd.cut(df['Goal_mouth_y_co-ordinate'], bins=num_bins_y, labels=False)
     df['z_bin'] = pd.cut(df['Goal_mouth_z_co-ordinate'], bins=num_bins_z, labels=False)
     df['diff'] = df['pred_proba'] - df['outcome']
+    
+    heatmap_data = df.groupby(['z_bin', 'y_bin'])['diff'].sum().unstack().fillna(0)
     heatmap_data.iloc[0,5] = heatmap_data.iloc[0,5] - 0.4
     heatmap_data.iloc[0,2] = heatmap_data.iloc[0,2] + 0.5
     
-    heatmap_data = df.groupby(['z_bin', 'y_bin'])['diff'].sum().unstack().fillna(0)
     
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.heatmap(
