@@ -123,8 +123,8 @@ def plot_performance_heatmap(df, bins_y, bins_z):
     df['diff'] = df['pred_proba'] - df['outcome']
     
     heatmap_data = df.groupby(['z_bin', 'y_bin'])['diff'].sum().unstack().fillna(0)
-    heatmap_data.iloc[0,5] = heatmap_data.iloc[0,5] - 0.4
-    heatmap_data.iloc[0,2] = heatmap_data.iloc[0,2] + 0.5
+    #heatmap_data.iloc[0,5] = heatmap_data.iloc[0,5] - 0.4
+    #heatmap_data.iloc[0,2] = heatmap_data.iloc[0,2] + 0.5
     
     
     fig, ax = plt.subplots(figsize=(10, 6))
