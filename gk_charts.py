@@ -100,10 +100,10 @@ def plot_goal_vs_miss(df):
     df_miss["size"] = df_miss["pred_proba"].apply(scale_size)
     
     # Graficar los goles en verde
-    ax.scatter(df_goal["x"], df_goal["y"], color='green', s=df_goal["size"], alpha=0.4, edgecolors='black', label='Gol')
+    ax.scatter(df_goal["x"], df_goal["y"], color='red', s=df_goal["size"], alpha=0.4, edgecolors='black', label='Gol')
     
     # Graficar los no goles en rojo
-    ax.scatter(df_miss["x"], df_miss["y"], color='red', s=df_miss["size"], alpha=0.4, edgecolors='black', label='No Gol')
+    ax.scatter(df_miss["x"], df_miss["y"], color='green', s=df_miss["size"], alpha=0.4, edgecolors='black', label='No Gol')
     
     # Agregar leyenda
     ax.legend()
