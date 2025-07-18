@@ -26,8 +26,8 @@ def plot_goalkeeper_analysis(df_filtered):
     def scale_size(proba, min_size=50, max_size=300):
         return min_size + (max_size - min_size) * proba
     
-    df_goal['size'] = df_goal['pred_proba'].apply(scale_size)
-    df_saved['size'] = df_saved['pred_proba'].apply(scale_size)
+    df_goal['size'] = df_goal['xgot'].apply(scale_size)
+    df_saved['size'] = df_saved['xgot'].apply(scale_size)
     
     # Crear la figura y los ejes
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -35,11 +35,11 @@ def plot_goalkeeper_analysis(df_filtered):
     # Mostrar la imagen de fondo ajustada a los límites del arco
     ax.imshow(goal_img, extent=[y_post1, y_post2, z_min, z_max], aspect='auto')
     
-    # Graficar los goles en rojo con opacidad y tamaño según pred_proba
+    # Graficar los goles en rojo con opacidad y tamaño según xgot
     ax.scatter(df_goal['Goal_mouth_y_co-ordinate'], df_goal['Goal_mouth_z_co-ordinate'], color='red', label='Gol', 
                s=df_goal['size'], edgecolors='black', alpha=0.6)
     
-    # Graficar los intentos salvados en verde con opacidad y tamaño según pred_proba
+    # Graficar los intentos salvados en verde con opacidad y tamaño según xgot
     ax.scatter(df_saved['Goal_mouth_y_co-ordinate'], df_saved['Goal_mouth_z_co-ordinate'], color='green', label='Intento Desviado', 
                s=df_saved['size'] * 1.3, edgecolors='black', alpha=0.6)
     
@@ -72,7 +72,7 @@ def plot_shot_map(df):
     fig, ax = pitch.draw(figsize=(10, 6))
     
     # Graficar los puntos
-    sc = ax.scatter(df_gol_saved["x"], df_gol_saved["y"], c=df_gol_saved["pred_proba"], cmap="RdYlGn", alpha=0.4)
+    sc = ax.scatter(df_gol_saved["x"], df_gol_saved["y"], c=df_gol_saved["xgot"], cmap="RdYlGn", alpha=0.4)
     
     # Agregar barra de colores
     cbar = plt.colorbar(sc, ax=ax)
@@ -96,8 +96,8 @@ def plot_goal_vs_miss(df):
     def scale_size(proba, min_size=50, max_size=300):
         return min_size + (max_size - min_size) * proba
     
-    df_goal["size"] = df_goal["pred_proba"].apply(scale_size)
-    df_miss["size"] = df_miss["pred_proba"].apply(scale_size)
+    df_goal["size"] = df_goal["xgot"].apply(scale_size)
+    df_miss["size"] = df_miss["xgot"].apply(scale_size)
     
     # Graficar los goles en verde
     ax.scatter(df_goal["x"], df_goal["y"], color='red', s=df_goal["size"], alpha=0.4, edgecolors='black', label='Gol')
@@ -120,7 +120,7 @@ def plot_performance_heatmap(df, bins_y, bins_z):
     
     df['y_bin'] = pd.cut(df['Goal_mouth_y_co-ordinate'], bins=num_bins_y, labels=False)
     df['z_bin'] = pd.cut(df['Goal_mouth_z_co-ordinate'], bins=num_bins_z, labels=False)
-    df['diff'] = df['pred_proba'] - df['outcome']
+    df['diff'] = df['xgot'] - df['outcome']
     
     heatmap_data = df.groupby(['z_bin', 'y_bin'])['diff'].sum().unstack().fillna(0)
     #heatmap_data.iloc[0,5] = heatmap_data.iloc[0,5] + 1
