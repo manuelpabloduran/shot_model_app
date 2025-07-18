@@ -55,7 +55,7 @@ df_new["pitch_zone_shot"] = df_new.apply(
 )
 
 # Crear pestañas
-tab1 = st.tabs(["GoalKeeper Analysis"])
+tab1, tab2 = st.tabs(["GoalKeeper Analysis", "Shot Analysis"])
 
 with tab1:
     st.subheader("🥅 GoalKeeper Analysis 🥅")
@@ -209,3 +209,6 @@ with tab1:
     with col2:
         fig_gk_perf_map = plot_gk_saves_map(df_filtered[df_filtered['NaEventType']=="Attempt Saved"], "Atajadas", cmap_name="Greens")
         st.pyplot(fig_gk_perf_map)
+
+with tab2:
+    pass
