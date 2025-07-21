@@ -393,10 +393,15 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
     ax.plot(x, grouped['xgot'], label='xGoT', color=color_xgot, linewidth=1.5, marker='o', solid_capstyle='round')
     ax.plot(x, grouped['goles_prevenidos'], label='Goles Prevenidos', color=color_prevenidos, linewidth=2.5, marker='o', solid_capstyle='round')
 
+     # Línea horizontal en y=0
+    ax.axhline(0, color='black', linestyle='--', linewidth=1)
+    ax.text(len(grouped) - 1, 0.5, 'Rendimiento Esperado', color='black', fontsize=10, ha='right', va='bottom')
+
+    
     # Personalización
     ax.set_xticks(x)
     ax.set_xticklabels(labels, rotation=90)
-    ax.set_xlabel({'fecha': 'Fecha', 'equipo': 'Equipo (orden cronológico)', 'fecha_equipo': 'Fecha | Equipo'}[x_axis])
+    ax.set_xlabel({'fecha': 'Fecha', 'equipo': 'Equipo', 'fecha_equipo': 'Fecha | Equipo'}[x_axis])
     ax.set_ylabel('Valor')
     ax.set_title(f'Goles vs xGoT vs Goles Prevenidos (por {x_axis})')
     ax.grid(alpha=0.3)
