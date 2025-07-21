@@ -192,6 +192,10 @@ with tab1:
     percentil = percentileofscore(performance_por_gk.values, selected_performance)
     
     # Rendimiento global del portero
+    st.markdown(
+    "<h2 style='text-align: center; color: black;'>🥅 Rendimiento Global del Portero</h2>",
+    unsafe_allow_html=True)
+
     st.markdown("📈 Evolución del Rendimiento")
     x_axis_option = st.radio(
         "Elegir eje X:",
@@ -220,6 +224,11 @@ with tab1:
         st.metric(label="Rendimiento Real vs Esperado", value=f"{total_performance:.2f}")
         st.metric(label="Percentil del Portero", value=f"{percentil:.1f} %")
     
+    # Rendimiento en el arco
+    st.markdown(
+    "<h2 style='text-align: center; color: black;'>🥅 Distribución en el arco</h2>",
+    unsafe_allow_html=True)
+    
     # Crear una disposición en columnas para mostrar los gráficos en la misma fila
     col1, col2 = st.columns(2)
     
@@ -244,6 +253,11 @@ with tab1:
         
         fig_shot_map = plot_goal_vs_miss(df_filtered)
         st.pyplot(fig_shot_map)    
+    
+    # Rendimiento en el arco
+    st.markdown(
+    "<h2 style='text-align: center; color: black;'>🥅 Según Posicionamiento en el campo</h2>",
+    unsafe_allow_html=True)
     
     fig_gk_perf_map = plot_gk_performance_map(df_filtered)
     st.pyplot(fig_gk_perf_map)
