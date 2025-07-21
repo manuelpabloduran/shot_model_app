@@ -74,6 +74,8 @@ with tab1:
         value=(min_date, max_date),
         format="YYYY-MM-DD"
     )
+
+    df_new = df_new[(df_new['date'] >= date_range[0]) & (df_new['date'] <= date_range[1])]
     
     col1, col2 = st.columns(2)
     
@@ -158,10 +160,7 @@ with tab1:
         st.write(f"Se analizarán {len(df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")])} eventos de las temporadas seleccionadas.")
     
     # Filtrar datos por portero seleccionado
-    df_filtered_all_dates = df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")]
-
-    # Filtrar el DataFrame por rango
-    df_filtered = df_filtered_all_dates[(df_filtered_all_dates['date'] >= date_range[0]) & (df_filtered_all_dates['date'] <= date_range[1])]
+    df_filtered = df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")]
 
     # Aplicar la clasificación a las coordenadas del tiro
     df_filtered["pitch_zone_shot"] = df_filtered.apply(
@@ -176,14 +175,14 @@ with tab1:
     total_performance = df_filtered["xgot"].sum() - total_goals
 
     # 2. Contar partidos por portero
-    partidos_por_gk = df_filtered.groupby('NaPlayer_gk')['date'].nunique()
+    partidos_por_gk = df_new.groupby('NaPlayer_gk')['date'].nunique()
 
     # 3. Filtrar porteros con al menos 20 partidos
     gks_validos = partidos_por_gk[partidos_por_gk >= 20].index
 
     # 4. Calcular total_performance por portero
     performance_por_gk = (
-        df_filtered[df_filtered['NaPlayer_gk'].isin(gks_validos)]
+        df_new[df_new['NaPlayer_gk'].isin(gks_validos)]
         .groupby('NaPlayer_gk')
         .apply(lambda g: g['xgot'].sum() - (g['NaEventType'] == 'Goal').sum())
     )
