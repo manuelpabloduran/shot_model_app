@@ -362,7 +362,7 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
         x_label = 'Fecha'
     
     elif x_axis == 'equipo':
-        grouped = df.groupby('NaTeamEvent').agg({
+        grouped = df.groupby(['date', 'NaTeamEvent']).agg({
             'outcome': 'sum',
             'xgot': 'sum'
         }).reset_index()
