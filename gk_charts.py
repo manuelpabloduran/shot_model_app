@@ -439,7 +439,7 @@ def plot_total_goles_prevenidos(df, selected_gk):
 
     # Crear gráfico
     fig, ax = plt.subplots(figsize=(10, 6))
-    sns.swarmplot(x='goles_prevenidos', y='NaPlayer_gk', data=totales, hue='highlight',
+    sns.swarmplot(x='goles_prevenidos', data=totales, hue='highlight',
                   palette={selected_gk: 'red', 'Otros Porteros': 'lightgray'}, size=8, ax=ax)
 
     # Personalización
