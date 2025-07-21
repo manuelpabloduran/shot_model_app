@@ -395,7 +395,7 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
 
      # Línea horizontal en y=0
     ax.axhline(0, color='black', linestyle='--', linewidth=1)
-    ax.text(len(grouped) - 1, 0.5, 'Rendimiento Esperado', color='black', fontsize=10, ha='right', va='bottom')
+    ax.text(len(grouped) - 1, -1, 'Rendimiento Esperado', color='black', fontsize=10, ha='right', va='bottom')
 
     
     # Personalización
