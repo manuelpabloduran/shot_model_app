@@ -336,29 +336,51 @@ def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
 
     return fig
 
-def plot_goals_vs_xgot_by_team(df):
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def plot_goals_vs_xgot(df, x_axis='fecha'):
     """
-    Genera un gráfico de línea agrupado por fecha y equipo.
-    Eje X = 'Fecha | Equipo' (ordenado cronológicamente)
+    Genera un gráfico de línea de goles vs xGoT vs goles prevenidos.
     
     Parámetros:
         df (pd.DataFrame): Debe contener 'date', 'NaTeamEvent', 'outcome', 'xgot'
+        x_axis (str): 'fecha', 'equipo', o 'fecha_equipo'
     
     Retorna:
         fig (matplotlib.figure.Figure)
     """
     
-    # Agrupar por fecha y equipo
-    grouped = df.groupby(['date', 'NaTeamEvent']).agg({
-        'outcome': 'sum',
-        'xgot': 'sum'
-    }).reset_index()
+    # Agrupar según la opción
+    if x_axis == 'fecha':
+        grouped = df.groupby('date').agg({
+            'outcome': 'sum',
+            'xgot': 'sum'
+        }).reset_index()
+        grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
+        grouped['label'] = grouped['date'].astype(str)
+        x_label = 'Fecha'
     
-    # Calcular goles prevenidos
-    grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
+    elif x_axis == 'equipo':
+        grouped = df.groupby('NaTeamEvent').agg({
+            'outcome': 'sum',
+            'xgot': 'sum'
+        }).reset_index()
+        grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
+        grouped['label'] = grouped['NaTeamEvent']
+        x_label = 'Equipo'
     
-    # Crear columna combinada para el eje X
-    grouped['label'] = grouped['date'].astype(str) + " | " + grouped['NaTeamEvent']
+    elif x_axis == 'fecha_equipo':
+        grouped = df.groupby(['date', 'NaTeamEvent']).agg({
+            'outcome': 'sum',
+            'xgot': 'sum'
+        }).reset_index()
+        grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
+        grouped['label'] = grouped['date'].astype(str) + " | " + grouped['NaTeamEvent']
+        x_label = 'Fecha | Equipo'
+    
+    else:
+        raise ValueError("x_axis debe ser 'fecha', 'equipo' o 'fecha_equipo'")
     
     # Crear figura
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -379,9 +401,9 @@ def plot_goals_vs_xgot_by_team(df):
             linewidth=2.5, marker='o', markersize=6, solid_capstyle='round')
     
     # Personalización
-    ax.set_xlabel('Equipo (ordenado por fecha)', fontsize=12)
+    ax.set_xlabel(x_label, fontsize=12)
     ax.set_ylabel('Valor', fontsize=12)
-    ax.set_title('Goles vs xGoT vs Goles Prevenidos (por equipo en orden cronológico)', fontsize=14)
+    ax.set_title(f'Goles vs xGoT vs Goles Prevenidos (por {x_label})', fontsize=14)
     ax.legend()
     ax.grid(alpha=0.3)
     
