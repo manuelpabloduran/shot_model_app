@@ -47,7 +47,7 @@ st.title("⚽ Shot Analysis ⚽")
 
 # Cargar datos
 df_new = pd.read_csv('3___model_predict_xg_xgot.csv')
-df_new = df_new[(df_new['xgot']>0)&(df_new['NaPlayer_gk']!=0)]
+df_new = df_new[(df_new['xgot']>0)&(df_new['NaPlayer_gk']!="0")]
 df_new['date'] = pd.to_datetime(df_new['TsEvent']).dt.date
 
 # Rango de fechas disponible
