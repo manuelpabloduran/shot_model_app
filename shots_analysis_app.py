@@ -193,7 +193,7 @@ with tab1:
     
     # Rendimiento global del portero
     st.markdown(
-    "<h2 style='text-align: center; color: black;'>🥅 Rendimiento Global del Portero</h2>",
+    "<h2 style='text-align: center; color: black;'>🥅 RENDIMIENTO GLOBAL DEL PORTERO </h2>",
     unsafe_allow_html=True)
 
     st.markdown("📈 Evolución del Rendimiento")
@@ -226,7 +226,7 @@ with tab1:
     
     # Rendimiento en el arco
     st.markdown(
-    "<h2 style='text-align: center; color: black;'>🥅 Distribución en el arco</h2>",
+    "<h2 style='text-align: center; color: black;'>🥅 DISTRIBUCIÓN EN EL ARCO </h2>",
     unsafe_allow_html=True)
     
     # Crear una disposición en columnas para mostrar los gráficos en la misma fila
@@ -256,7 +256,7 @@ with tab1:
     
     # Rendimiento en el arco
     st.markdown(
-    "<h2 style='text-align: center; color: black;'>🥅 Según Posicionamiento en el campo</h2>",
+    "<h2 style='text-align: center; color: black;'>🥅 POSICIONAMIENTO EN EL CAMPO </h2>",
     unsafe_allow_html=True)
     
     fig_gk_perf_map = plot_gk_performance_map(df_filtered)
