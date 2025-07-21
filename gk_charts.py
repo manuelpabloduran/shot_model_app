@@ -362,13 +362,21 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
         x_label = 'Fecha'
     
     elif x_axis == 'equipo':
+        # Agrupar por fecha y equipo (mantener granularidad temporal)
         grouped = df.groupby(['date', 'NaTeamEvent']).agg({
             'outcome': 'sum',
             'xgot': 'sum'
         }).reset_index()
+        
+        # Ordenar por fecha
+        grouped = grouped.sort_values('date')
+        
+        # Calcular goles prevenidos
         grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
+        
+        # Eje X: solo equipo, pero respeta el orden temporal
         grouped['label'] = grouped['NaTeamEvent']
-        x_label = 'Equipo'
+        x_label = 'Equipo (ordenado cronológicamente)'
     
     elif x_axis == 'fecha_equipo':
         grouped = df.groupby(['date', 'NaTeamEvent']).agg({
