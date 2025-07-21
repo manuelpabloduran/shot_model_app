@@ -335,3 +335,59 @@ def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
     ax.set_title(f"Mapa de {name_event}", fontsize=15)
 
     return fig
+
+def plot_goals_vs_xgot_by_team(df):
+    """
+    Genera un gráfico de línea agrupado por fecha y equipo.
+    Eje X = 'Fecha | Equipo' (ordenado cronológicamente)
+    
+    Parámetros:
+        df (pd.DataFrame): Debe contener 'date', 'NaTeamEvent', 'outcome', 'xgot'
+    
+    Retorna:
+        fig (matplotlib.figure.Figure)
+    """
+    
+    # Agrupar por fecha y equipo
+    grouped = df.groupby(['date', 'NaTeamEvent']).agg({
+        'outcome': 'sum',
+        'xgot': 'sum'
+    }).reset_index()
+    
+    # Calcular goles prevenidos
+    grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
+    
+    # Crear columna combinada para el eje X
+    grouped['label'] = grouped['date'].astype(str) + " | " + grouped['NaTeamEvent']
+    
+    # Crear figura
+    fig, ax = plt.subplots(figsize=(12, 6))
+    fig.patch.set_alpha(0)
+    ax.set_facecolor('none')
+    
+    # Colores pastel
+    color_outcome = '#ff6961'
+    color_xgot = '#84b6f4'
+    color_prevenidos = '#77dd77'
+    
+    # Graficar
+    ax.plot(grouped['label'], grouped['outcome'], label='Goles', color=color_outcome,
+            linewidth=2.5, marker='o', markersize=6, solid_capstyle='round')
+    ax.plot(grouped['label'], grouped['xgot'], label='xGoT', color=color_xgot,
+            linewidth=2.5, marker='o', markersize=6, solid_capstyle='round')
+    ax.plot(grouped['label'], grouped['goles_prevenidos'], label='Goles Prevenidos', color=color_prevenidos,
+            linewidth=2.5, marker='o', markersize=6, solid_capstyle='round')
+    
+    # Personalización
+    ax.set_xlabel('Equipo (ordenado por fecha)', fontsize=12)
+    ax.set_ylabel('Valor', fontsize=12)
+    ax.set_title('Goles vs xGoT vs Goles Prevenidos (por equipo en orden cronológico)', fontsize=14)
+    ax.legend()
+    ax.grid(alpha=0.3)
+    
+    # Ajustar etiquetas
+    ax.set_xticks(range(len(grouped['label'])))
+    ax.set_xticklabels(grouped['label'], rotation=90)
+    
+    plt.tight_layout()
+    return fig

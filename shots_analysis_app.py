@@ -47,12 +47,12 @@ st.title("⚽ Shot Analysis ⚽")
 
 # Cargar datos
 df_new = pd.read_csv('3___model_predict_xg_xgot.csv')
-df_new = df_new[df_new['xgot']>0]
+df_new = df_new[(df_new['xgot']>0)&(df_new['NaPlayer_gk']!=0)]
+df_new['date'] = pd.to_datetime(df_new['TsEvent']).dt.date
 
-# Aplicar la clasificación a las coordenadas del tiro
-df_new["pitch_zone_shot"] = df_new.apply(
-    lambda row: classify_pitch_zone_dynamic(row["x"], row["y"]), axis=1
-)
+# Rango de fechas disponible
+min_date = df_new['date'].min()
+max_date = df_new['date'].max()
 
 # Crear pestañas
 tab1, tab2 = st.tabs(["GoalKeeper Analysis", "Shot Analysis"])
@@ -63,6 +63,16 @@ with tab1:
     st.markdown("🔍 Selección de Filtros")
     # Filtro de selección de portero
     selected_gk = st.selectbox("Selección de Portero para el análisis", df_new.sort_values('NaPlayer_gk')['NaPlayer_gk'].unique())
+
+    # Selector de rango de fechas
+    st.markdown("📅 **Selecciona el periodo de análisis**")
+    date_range = st.slider(
+        "Rango de Fechas:",
+        min_value=min_date,
+        max_value=max_date,
+        value=(min_date, max_date),
+        format="YYYY-MM-DD"
+    )
     
     col1, col2 = st.columns(2)
     
@@ -147,7 +157,15 @@ with tab1:
         st.write(f"Se analizarán {len(df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")])} eventos de las temporadas seleccionadas.")
     
     # Filtrar datos por portero seleccionado
-    df_filtered = df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")]
+    df_filtered_all_dates = df_new[(df_new['NaPlayer_gk'] == selected_gk) & (df_new['NaEventType'] != "Miss")]
+
+    # Filtrar el DataFrame por rango
+    df_filtered = df_filtered_all_dates[(df_filtered_all_dates['date'] >= date_range[0]) & (df_filtered_all_dates['date'] <= date_range[1])]
+
+    # Aplicar la clasificación a las coordenadas del tiro
+    df_filtered["pitch_zone_shot"] = df_filtered.apply(
+        lambda row: classify_pitch_zone_dynamic(row["x"], row["y"]), axis=1
+    )
 
     # Calcular métricas
     total_shots = df_filtered[df_filtered['NaEventType'].isin(["Goal", "Attempt Saved", "Post"])].shape[0]
@@ -155,6 +173,13 @@ with tab1:
     total_saves = df_filtered[df_filtered['NaEventType'] == "Attempt Saved"].shape[0]
     effectiveness = total_saves / total_shots if total_shots > 0 else 0
     total_performance = df_filtered["xgot"].sum() - total_goals
+    
+    # Rendimiento global del portero
+    st.markdown("📈 Evolución del Rendimiento")
+    col1 = st.columns(1)
+    fig = plot_goals_vs_xgot_by_team(df_filtered)
+    st.pyplot(fig)
+    
     
     # Mostrar métricas
     st.markdown("📈 Estadísticas Generales")
