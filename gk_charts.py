@@ -425,3 +425,4 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
     ax.legend()
     plt.tight_layout()
 
+    return fig
