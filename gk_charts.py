@@ -408,3 +408,45 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
     plt.tight_layout()
 
     return fig
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def plot_total_goles_prevenidos(df, selected_gk):
+    """
+    Genera un gráfico tipo swarmplot del total de goles prevenidos por portero,
+    destacando al portero seleccionado.
+
+    Parámetros:
+        df (pd.DataFrame): Debe contener columnas ['NaPlayer_gk', 'xgot', 'outcome']
+        selected_gk (str): Nombre del portero a resaltar
+
+    Retorna:
+        fig (matplotlib.figure.Figure): Figura para usar en Streamlit con st.pyplot(fig)
+    """
+
+    # Calcular goles prevenidos
+    df['goles_prevenidos'] = df['xgot'] - df['outcome']
+
+    # Agrupar por portero y sumar
+    totales = df.groupby('NaPlayer_gk', as_index=False)['goles_prevenidos'].sum()
+
+    # Crear columna que indica si es el jugador seleccionado
+    totales['highlight'] = totales['NaPlayer_gk'].apply(lambda x: selected_gk if x == selected_gk else 'Otros Porteros')
+
+    # Ordenar para mostrar mejor
+    totales = totales.sort_values(by='goles_prevenidos', ascending=False)
+
+    # Crear gráfico
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.swarmplot(x='goles_prevenidos', y='NaPlayer_gk', data=totales, hue='highlight',
+                  palette={selected_gk: 'red', 'Otros Porteros': 'lightgray'}, size=8, ax=ax)
+
+    # Personalización
+    ax.set_title('Total de Goles Prevenidos - Rendimiento Global', fontsize=14)
+    ax.set_xlabel('Goles Prevenidos', fontsize=12)
+    ax.set_ylabel('Porteros', fontsize=12)
+    ax.legend(title='Jugadores')
+    plt.tight_layout()
+
+    return fig
