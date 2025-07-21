@@ -362,7 +362,7 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
         x_label = 'Fecha'
     
     elif x_axis == 'equipo':
-        # Agrupar por fecha y equipo (mantener granularidad temporal)
+        # Agrupar por fecha y equipo (mantener orden temporal)
         grouped = df.groupby(['date', 'NaTeamEvent']).agg({
             'outcome': 'sum',
             'xgot': 'sum'
@@ -374,9 +374,10 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
         # Calcular goles prevenidos
         grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
         
-        # Eje X: solo equipo, pero respeta el orden temporal
-        grouped['label'] = grouped['NaTeamEvent']
-        x_label = 'Equipo (ordenado cronológicamente)'
+        # Crear índice numérico para mantener el orden temporal
+        x = range(len(grouped))  # posiciones para el plot
+        labels = grouped['NaTeamEvent']  # etiquetas solo con equipo
+
     
     elif x_axis == 'fecha_equipo':
         grouped = df.groupby(['date', 'NaTeamEvent']).agg({
@@ -400,24 +401,27 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
     color_xgot = '#84b6f4'
     color_prevenidos = '#77dd77'
     
-    # Graficar
-    ax.plot(grouped['label'], grouped['outcome'], label='Goles', color=color_outcome,
-            linewidth=2.5, marker='o', markersize=6, solid_capstyle='round')
-    ax.plot(grouped['label'], grouped['xgot'], label='xGoT', color=color_xgot,
-            linewidth=2.5, marker='o', markersize=6, solid_capstyle='round')
-    ax.plot(grouped['label'], grouped['goles_prevenidos'], label='Goles Prevenidos', color=color_prevenidos,
-            linewidth=2.5, marker='o', markersize=6, solid_capstyle='round')
-    
-    # Personalización
-    ax.set_xlabel(x_label, fontsize=12)
-    ax.set_ylabel('Valor', fontsize=12)
-    ax.set_title(f'Goles vs xGoT vs Goles Prevenidos (por {x_label})', fontsize=14)
-    ax.legend()
+    fig, ax = plt.subplots(figsize=(12, 6))
+    fig.patch.set_alpha(0)
+    ax.set_facecolor('none')
+
+    # Colores
+    color_outcome = '#ff6961'
+    color_xgot = '#84b6f4'
+    color_prevenidos = '#77dd77'
+
+    # Dibujar líneas respetando orden temporal
+    ax.plot(x, grouped['outcome'], label='Goles', color=color_outcome, linewidth=2.5, marker='o')
+    ax.plot(x, grouped['xgot'], label='xGoT', color=color_xgot, linewidth=2.5, marker='o')
+    ax.plot(x, grouped['goles_prevenidos'], label='Goles Prevenidos', color=color_prevenidos, linewidth=2.5, marker='o')
+
+    # Personalizar eje X
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=90)
+    ax.set_xlabel('Equipo (orden cronológico)')
+    ax.set_ylabel('Valor')
+    ax.set_title('Evolución cronológica mostrando nombres de equipos')
     ax.grid(alpha=0.3)
-    
-    # Ajustar etiquetas
-    ax.set_xticks(range(len(grouped['label'])))
-    ax.set_xticklabels(grouped['label'], rotation=90)
-    
+    ax.legend()
     plt.tight_layout()
-    return fig
+
