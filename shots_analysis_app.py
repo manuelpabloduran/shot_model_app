@@ -6,6 +6,7 @@ from PIL import Image
 from mplsoccer import Pitch
 from itertools import product
 import pickle
+from scipy.stats import percentileofscore
 
 from gk_charts import *
 from model_functions import *
@@ -173,12 +174,34 @@ with tab1:
     total_saves = df_filtered[df_filtered['NaEventType'] == "Attempt Saved"].shape[0]
     effectiveness = total_saves / total_shots if total_shots > 0 else 0
     total_performance = df_filtered["xgot"].sum() - total_goals
+
+    # 2. Contar partidos por portero
+    partidos_por_gk = df_new.groupby('NaPlayer_gk')['date'].nunique()
+
+    # 3. Filtrar porteros con al menos 20 partidos
+    gks_validos = partidos_por_gk[partidos_por_gk >= 20].index
+
+    # 4. Calcular total_performance por portero
+    performance_por_gk = (
+        df_new[df_new['NaPlayer_gk'].isin(gks_validos)]
+        .groupby('NaPlayer_gk')
+        .apply(lambda g: g['xgot'].sum() - (g['NaEventType'] == 'Goal').sum())
+    )
+
+    selected_performance = total_performance  # ya lo calculaste antes para el portero actual
+    percentil = percentileofscore(performance_por_gk.values, selected_performance)
     
     # Rendimiento global del portero
     st.markdown("📈 Evolución del Rendimiento")
-    col1 = st.columns(1)
-    fig = plot_goals_vs_xgot_by_team(df_filtered)
+    x_axis_option = st.radio(
+        "Elegir eje X:",
+        ('fecha', 'equipo', 'fecha_equipo'),
+        format_func=lambda x: {'fecha':'Por Fecha', 'equipo':'Por Equipo', 'fecha_equipo':'Por Fecha y Equipo'}[x]
+    )
+
+    fig = plot_goals_vs_xgot(df_filtered, x_axis=x_axis_option)
     st.pyplot(fig)
+
     
     
     # Mostrar métricas
@@ -195,6 +218,7 @@ with tab1:
     
     with col3:
         st.metric(label="Rendimiento Real vs Esperado", value=f"{total_performance:.2f}")
+        st.metric(label="Percentil del Portero", value=f"{percentil:.1f} %")
     
     # Crear una disposición en columnas para mostrar los gráficos en la misma fila
     col1, col2 = st.columns(2)
