@@ -389,9 +389,9 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
     color_prevenidos = '#77dd77'
 
     # Graficar respetando orden temporal
-    ax.plot(x, grouped['outcome'], label='Goles', color=color_outcome, linewidth=2.5, marker='o')
-    ax.plot(x, grouped['xgot'], label='xGoT', color=color_xgot, linewidth=2.5, marker='o')
-    ax.plot(x, grouped['goles_prevenidos'], label='Goles Prevenidos', color=color_prevenidos, linewidth=2.5, marker='o')
+    ax.plot(x, grouped['outcome'], label='Goles', color=color_outcome, linewidth=1.5, marker='o', solid_capstyle='round')
+    ax.plot(x, grouped['xgot'], label='xGoT', color=color_xgot, linewidth=1.5, marker='o', solid_capstyle='round')
+    ax.plot(x, grouped['goles_prevenidos'], label='Goles Prevenidos', color=color_prevenidos, linewidth=2.5, marker='o', solid_capstyle='round')
 
     # Personalización
     ax.set_xticks(x)
