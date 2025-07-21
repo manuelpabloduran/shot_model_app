@@ -339,6 +339,8 @@ def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
 import pandas as pd
 import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+
 def plot_goals_vs_xgot(df, x_axis='fecha'):
     """
     Genera un gráfico de línea de goles vs xGoT vs goles prevenidos.
@@ -350,77 +352,53 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
     Retorna:
         fig (matplotlib.figure.Figure)
     """
-    
-    # Agrupar según la opción
-    if x_axis == 'fecha':
-        grouped = df.groupby('date').agg({
-            'outcome': 'sum',
-            'xgot': 'sum'
-        }).reset_index()
-        grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
-        grouped['label'] = grouped['date'].astype(str)
-        x_label = 'Fecha'
-    
-    elif x_axis == 'equipo':
-        # Agrupar por fecha y equipo (mantener orden temporal)
-        grouped = df.groupby(['date', 'NaTeamEvent']).agg({
-            'outcome': 'sum',
-            'xgot': 'sum'
-        }).reset_index()
-        
-        # Ordenar por fecha
-        grouped = grouped.sort_values('date')
-        
-        # Calcular goles prevenidos
-        grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
-        
-        # Crear índice numérico para mantener el orden temporal
-        x = range(len(grouped))  # posiciones para el plot
-        labels = grouped['NaTeamEvent']  # etiquetas solo con equipo
 
-    
-    elif x_axis == 'fecha_equipo':
-        grouped = df.groupby(['date', 'NaTeamEvent']).agg({
-            'outcome': 'sum',
-            'xgot': 'sum'
-        }).reset_index()
+    # Calcular datos según opción
+    if x_axis == 'fecha':
+        grouped = df.groupby('date').agg({'outcome': 'sum', 'xgot': 'sum'}).reset_index()
         grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
-        grouped['label'] = grouped['date'].astype(str) + " | " + grouped['NaTeamEvent']
-        x_label = 'Fecha | Equipo'
-    
+        grouped = grouped.sort_values('date')
+        labels = grouped['date'].astype(str)
+
+    elif x_axis == 'equipo':
+        grouped = df.groupby(['date', 'NaTeamEvent']).agg({'outcome': 'sum', 'xgot': 'sum'}).reset_index()
+        grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
+        grouped = grouped.sort_values('date')
+        labels = grouped['NaTeamEvent']
+
+    elif x_axis == 'fecha_equipo':
+        grouped = df.groupby(['date', 'NaTeamEvent']).agg({'outcome': 'sum', 'xgot': 'sum'}).reset_index()
+        grouped['goles_prevenidos'] = grouped['xgot'] - grouped['outcome']
+        grouped = grouped.sort_values('date')
+        labels = grouped['date'].astype(str) + " | " + grouped['NaTeamEvent']
+
     else:
         raise ValueError("x_axis debe ser 'fecha', 'equipo' o 'fecha_equipo'")
-    
+
+    # Crear índice numérico para mantener orden temporal
+    x = range(len(grouped))
+
     # Crear figura
     fig, ax = plt.subplots(figsize=(12, 6))
     fig.patch.set_alpha(0)
     ax.set_facecolor('none')
-    
+
     # Colores pastel
     color_outcome = '#ff6961'
     color_xgot = '#84b6f4'
     color_prevenidos = '#77dd77'
-    
-    fig, ax = plt.subplots(figsize=(12, 6))
-    fig.patch.set_alpha(0)
-    ax.set_facecolor('none')
 
-    # Colores
-    color_outcome = '#ff6961'
-    color_xgot = '#84b6f4'
-    color_prevenidos = '#77dd77'
-
-    # Dibujar líneas respetando orden temporal
+    # Graficar respetando orden temporal
     ax.plot(x, grouped['outcome'], label='Goles', color=color_outcome, linewidth=2.5, marker='o')
     ax.plot(x, grouped['xgot'], label='xGoT', color=color_xgot, linewidth=2.5, marker='o')
     ax.plot(x, grouped['goles_prevenidos'], label='Goles Prevenidos', color=color_prevenidos, linewidth=2.5, marker='o')
 
-    # Personalizar eje X
+    # Personalización
     ax.set_xticks(x)
     ax.set_xticklabels(labels, rotation=90)
-    ax.set_xlabel('Equipo (orden cronológico)')
+    ax.set_xlabel({'fecha': 'Fecha', 'equipo': 'Equipo (orden cronológico)', 'fecha_equipo': 'Fecha | Equipo'}[x_axis])
     ax.set_ylabel('Valor')
-    ax.set_title('Evolución cronológica mostrando nombres de equipos')
+    ax.set_title(f'Goles vs xGoT vs Goles Prevenidos (por {x_axis})')
     ax.grid(alpha=0.3)
     ax.legend()
     plt.tight_layout()
