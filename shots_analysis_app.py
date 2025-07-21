@@ -195,6 +195,10 @@ with tab1:
     "<h2 style='text-align: center; color: black;'>🥅 RENDIMIENTO GLOBAL DEL PORTERO </h2>",
     unsafe_allow_html=True)
 
+    # Gráfico swarmplot en Streamlit
+    fig_swarm = plot_total_goles_prevenidos(df_new, selected_gk)
+    st.pyplot(fig_swarm)
+
     st.markdown("📈 Evolución del Rendimiento")
     x_axis_option = st.radio(
         "Elegir eje X:",
