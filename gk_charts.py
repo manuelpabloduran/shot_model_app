@@ -344,7 +344,10 @@ def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
     }
 
     # Calcular la cantidad de atajadas por zona
-    zone_values = df.groupby("pitch_zone_gk")["IdEvent"].count().to_dict()
+    zone_values_raw = df.groupby("pitch_zone_gk")["IdEvent"].count().to_dict()
+
+    # Completar con 0 para las zonas faltantes
+    zone_values = {zone: zone_values_raw.get(zone, 0) for zone in buckets_gk.keys()}
 
     # Definir normalización de colores (centrado en vmax/2)
     vmin, vmax = min(zone_values.values(), default=0), max(zone_values.values(), default=1)
