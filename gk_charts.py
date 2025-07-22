@@ -150,6 +150,8 @@ def plot_performance_heatmap(df, bins_y, bins_z):
         .reindex(index=range(bins_z), columns=range(bins_y), fill_value=0)
     )
 
+    heatmap_data = heatmap_data.fillna(0)
+
     # Crear figura
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.heatmap(
