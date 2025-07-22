@@ -290,7 +290,7 @@ def plot_gk_performance_map(df_gk):
     zone_values = {zone: zone_values_raw.get(zone, 0) for zone in buckets_gk.keys()}
 
     # Definir normalización de colores (centrado en 0)
-    vmin, vmax = min(zone_values.values()), max(zone_values.values())
+    vmin, vmax = min(zone_values.values(), default=0), max(zone_values.values(), default=1)
     norm = TwoSlopeNorm(vmin=vmin, vcenter=0, vmax=vmax)
 
     # Dibujar el campo
