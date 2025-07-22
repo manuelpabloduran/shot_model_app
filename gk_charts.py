@@ -356,7 +356,7 @@ def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
     # Dibujar el campo
     pitch = Pitch(pitch_type='opta', pitch_color='white', line_color='black',
                   stripe=False, corner_arcs=True, goal_type='box', half=True)
-    fig, ax = pitch.draw(figsize=(14, 10))
+    fig, ax = pitch.draw(figsize=(12, 10))
 
     # Dibujar cada zona en el campo
     cmap = plt.get_cmap(cmap_name)  # Obtener el colormap
@@ -382,6 +382,9 @@ def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
 
     # Título del gráfico
     ax.set_title(f"Mapa de {name_event}", fontsize=15)
+
+    ax.set_xlim(70, 100)
+    ax.set_ylim(0, 100)
 
     return fig
 
@@ -496,7 +499,7 @@ def plot_gk_kde(df, name_event, cmap_name="Greens"):
     # Crear el campo de fútbol
     pitch = Pitch(pitch_type='opta', pitch_color='white', line_color='black',
                   stripe=False, corner_arcs=True, goal_type='box', half=True)
-    fig, ax = pitch.draw(figsize=(14, 10))
+    fig, ax = pitch.draw(figsize=(12, 10))
     
     # Filtrar filas con coordenadas del portero
     df = df.dropna(subset=['GK_X_Coordinate', 'GK_Y_Coordinate'])
