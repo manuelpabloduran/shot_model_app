@@ -13,7 +13,7 @@ from model_functions import *
 
 # Heatmaps size
 bin_y = 6
-bin_z = 3
+bin_z = 4
 
 buckets = {
     "Palo Corto 1": (88.5, 100, 21, 29),
