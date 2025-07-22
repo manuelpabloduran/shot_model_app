@@ -113,11 +113,6 @@ def plot_goal_vs_miss(df):
     
     return fig
 
-# Función para generar el heatmap de rendimiento esperado
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pandas as pd
 
 def plot_performance_heatmap(df, bins_y, bins_z):
     """
@@ -134,7 +129,7 @@ def plot_performance_heatmap(df, bins_y, bins_z):
 
     # Límites fijos
     y_min, y_max = 45.2, 54.8
-    z_min, z_max = 0, 38
+    z_min, z_max = 0, 36
 
     # Crear cortes fijos para Y y Z
     y_bins = np.linspace(y_min, y_max, bins_y + 1)
@@ -164,7 +159,8 @@ def plot_performance_heatmap(df, bins_y, bins_z):
         annot=True, fmt=".2f",
         linewidths=0.5, linecolor='gray',
         cbar_kws={'label': 'Rendimiento Acumulado'},
-        ax=ax
+        ax=ax,
+        mask=False  # Forzamos a no ocultar celdas
     )
 
     # Personalización
