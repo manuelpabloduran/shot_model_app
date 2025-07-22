@@ -80,6 +80,9 @@ def plot_shot_map(df):
     
     # Título del gráfico
     ax.set_title("Mapa de disparos", fontsize=14)
+
+    ax.set_xlim(50, 100)
+    ax.set_ylim(0, 100)
     
     return fig
 
@@ -110,6 +113,9 @@ def plot_goal_vs_miss(df):
     
     # Título del gráfico
     ax.set_title("Disparos: Goles vs Atajadas", fontsize=14)
+
+    ax.set_xlim(50, 100)
+    ax.set_ylim(0, 100)
     
     return fig
 
