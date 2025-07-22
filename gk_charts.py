@@ -515,5 +515,9 @@ def plot_gk_kde(df, name_event, cmap_name="Greens"):
     
     # Título
     ax.set_title(f"Mapa de calor posicionamiento portero - {name_event}", fontsize=14)
+
+    ax.set_xlim(70, 100)
+    ax.set_ylim(0, 100)
+
     
     return fig
