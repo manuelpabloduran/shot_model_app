@@ -265,16 +265,29 @@ with tab1:
         fig_gk_perf_map = plot_gk_saves_map(df_filtered[df_filtered['NaEventType']=="Goal"], "Goles", cmap_name="Reds")
         st.pyplot(fig_gk_perf_map)
 
-        # Generar y mostrar el gráfico del mapa de disparos
-        fig_prob_shot_map = plot_shot_map(df_filtered)
-        st.pyplot(fig_prob_shot_map)
     
     with col2:
         fig_gk_perf_map = plot_gk_saves_map(df_filtered[df_filtered['NaEventType']=="Attempt Saved"], "Atajadas", cmap_name="Greens")
         st.pyplot(fig_gk_perf_map)
 
+    
+    # Rendimiento en el arco
+    st.markdown(
+    "<h2 style='text-align: center; color: black;'>🥅 LOCACIÓN DEL DISPARO </h2>",
+    unsafe_allow_html=True)
+    
+    # Crear una disposición en columnas para mostrar los gráficos en la misma fila
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Generar y mostrar el gráfico del mapa de disparos
+        fig_prob_shot_map = plot_shot_map(df_filtered)
+        st.pyplot(fig_prob_shot_map)
+    
+    with col2:
         fig_shot_map = plot_goal_vs_miss(df_filtered)
         st.pyplot(fig_shot_map)    
+
 
 with tab2:
     pass
