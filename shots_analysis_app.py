@@ -265,11 +265,16 @@ with tab1:
         fig_gk_perf_map = plot_gk_saves_map(df_filtered[df_filtered['NaEventType']=="Goal"], "Goles", cmap_name="Reds")
         st.pyplot(fig_gk_perf_map)
 
+        fig_gk_kdeplot = plot_gk_kde(df_filtered[df_filtered['NaEventType']=="Goal"], "Goles", cmap_name="Reds")
+        st.pyplot(fig_gk_kdeplot)
+
     
     with col2:
         fig_gk_perf_map = plot_gk_saves_map(df_filtered[df_filtered['NaEventType']=="Attempt Saved"], "Atajadas", cmap_name="Greens")
         st.pyplot(fig_gk_perf_map)
 
+        fig_gk_kdeplot = plot_gk_kde(df_filtered[df_filtered['NaEventType']=="Attempt Saved"], "Atajadas", cmap_name="Greens")
+        st.pyplot(fig_gk_kdeplot)
     
     # Rendimiento en el arco
     st.markdown(

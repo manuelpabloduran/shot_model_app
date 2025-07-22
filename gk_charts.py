@@ -491,3 +491,28 @@ def plot_total_goles_prevenidos(df, selected_gk):
     plt.tight_layout()
 
     return fig
+
+def plot_gk_kde(df, name_event, cmap_name="Greens"):
+    # Crear el campo de fútbol
+    pitch = Pitch(pitch_type='opta', line_color='black')
+    fig, ax = pitch.draw(figsize=(10, 6))
+    
+    # Filtrar filas con coordenadas del portero
+    df = df.dropna(subset=['GK_X_Coordinate', 'GK_Y_Coordinate'])
+    
+    # Gráfico KDE
+    sns.kdeplot(
+        x=df['GK_X_Coordinate'],
+        y=df['GK_Y_Coordinate'],
+        fill=True,  # Rellenar la densidad
+        cmap=cmap_name,  # Colormap
+        alpha=0.7,
+        bw_adjust=0.6,  # Ajusta suavizado (menor = más detalle)
+        ax=ax,
+        thresh=0.05  # Umbral para no pintar ruido
+    )
+    
+    # Título
+    ax.set_title(f"Mapa de calor posicionamiento portero - {name_event}", fontsize=14)
+    
+    return fig
