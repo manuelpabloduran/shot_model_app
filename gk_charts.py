@@ -176,47 +176,67 @@ def plot_performance_heatmap(df, bins_y, bins_z):
 
     return fig
 
+def plot_event_heatmap(df, title_event, bins_y, bins_z, cmap_color, 
+                       y_col='Goal_mouth_y_co-ordinate', z_col='Goal_mouth_z_co-ordinate'):
+    """
+    Genera un heatmap de eventos por sector del arco con bins fijos y relleno de ceros.
 
-# Función para generar el heatmap de rendimiento esperado
-def plot_event_heatmap(df, title_event, bins_y, bins_z, cmap_color, y_col='Goal_mouth_y_co-ordinate', z_col='Goal_mouth_z_co-ordinate'):
+    Parámetros:
+        df (pd.DataFrame): Datos que incluyen coordenadas del arco.
+        title_event (str): Título del gráfico.
+        bins_y (int): Número de divisiones horizontales.
+        bins_z (int): Número de divisiones verticales.
+        cmap_color (str): Paleta de colores.
+        y_col, z_col (str): Columnas con coordenadas Y y Z.
 
-    # Definir el tamaño de la grilla
-    num_bins_y = bins_y  # Número de divisiones en Y (ancho del arco)
-    num_bins_z = bins_z   # Número de divisiones en Z (altura del arco)
+    Retorna:
+        fig (matplotlib.figure.Figure)
+    """
 
-    # Discretizar las coordenadas en cuadrantes
-    df['y_bin'] = pd.cut(df[y_col], bins=num_bins_y, labels=False)
-    df['z_bin'] = pd.cut(df[z_col], bins=num_bins_z, labels=False)
-    heatmap_data = df.groupby(['z_bin', 'y_bin'])['IdEvent'].count().unstack().fillna(0)
+    # Límites fijos (mismos que en performance heatmap)
+    y_min, y_max = 45.2, 54.8
+    z_min, z_max = 0, 36
 
-    # Crear la figura y los ejes
-    fig, ax = plt.subplots(figsize=(10, 6))
+    # Crear cortes fijos
+    y_bins = np.linspace(y_min, y_max, bins_y + 1)
+    z_bins = np.linspace(z_min, z_max, bins_z + 1)
 
-    # Graficar el heatmap
-    sns.heatmap(
-        heatmap_data, 
-        cmap=cmap_color,
-        annot=True, fmt=".0f", 
-        linewidths=0.5, linecolor='gray'
+    # Discretizar coordenadas
+    df['y_bin'] = pd.cut(df[y_col], bins=y_bins, labels=False, include_lowest=True)
+    df['z_bin'] = pd.cut(df[z_col], bins=z_bins, labels=False, include_lowest=True)
+
+    # Agrupar y contar eventos
+    heatmap_data = (
+        df.groupby(['z_bin', 'y_bin'])['IdEvent']
+        .count()
+        .unstack()
+        .reindex(index=range(bins_z), columns=range(bins_y), fill_value=0)
     )
 
-    # Ajustar etiquetas y título
+    heatmap_data = heatmap_data.fillna(0)
+
+    # Crear figura
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.heatmap(
+        heatmap_data,
+        cmap=cmap_color,
+        annot=True, fmt=".0f",
+        linewidths=0.5, linecolor='gray',
+        cbar_kws={'label': 'Cantidad de Eventos'},
+        ax=ax
+    )
+
+    # Personalización
     ax.set_title(f'{title_event} por sector del arco', fontsize=14)
-    
-    # Eliminar los valores y etiquetas de los ejes
-    ax.set_xticks([])  # Eliminar los valores en el eje X
-    ax.set_yticks([])  # Eliminar los valores en el eje Y
-
-    # Eliminar las etiquetas de los ejes
-    ax.set_xlabel('')  # Quitar la etiqueta del eje X
-    ax.set_ylabel('')  # Quitar la etiqueta del eje Y
-
-    # Invertir el eje X para que el arco tenga la orientación correcta
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_xlabel('')
+    ax.set_ylabel('')
     ax.invert_xaxis()
     ax.invert_yaxis()
 
-    # Mostrar el gráfico
     return fig
+
 
 def plot_gk_performance_map(df_gk):
     """
