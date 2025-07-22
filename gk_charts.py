@@ -114,39 +114,70 @@ def plot_goal_vs_miss(df):
     return fig
 
 # Función para generar el heatmap de rendimiento esperado
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
 def plot_performance_heatmap(df, bins_y, bins_z):
-    num_bins_y = bins_y  # Número de divisiones en Y (ancho del arco)
-    num_bins_z = bins_z   # Número de divisiones en Z (altura del arco)
+    """
+    Genera un heatmap del rendimiento acumulado por cuadrante del arco.
     
-    df['y_bin'] = pd.cut(df['Goal_mouth_y_co-ordinate'], bins=num_bins_y, labels=False)
-    df['z_bin'] = pd.cut(df['Goal_mouth_z_co-ordinate'], bins=num_bins_z, labels=False)
+    Parámetros:
+        df (pd.DataFrame): DataFrame con columnas Goal_mouth_y_co-ordinate, Goal_mouth_z_co-ordinate, xgot, outcome
+        bins_y (int): Número de divisiones horizontales (ancho)
+        bins_z (int): Número de divisiones verticales (alto)
+    
+    Retorna:
+        fig (matplotlib.figure.Figure)
+    """
+
+    # Límites fijos
+    y_min, y_max = 45.2, 54.8
+    z_min, z_max = 0, 38
+
+    # Crear cortes fijos para Y y Z
+    y_bins = np.linspace(y_min, y_max, bins_y + 1)
+    z_bins = np.linspace(z_min, z_max, bins_z + 1)
+
+    # Asignar bins fijos
+    df['y_bin'] = pd.cut(df['Goal_mouth_y_co-ordinate'], bins=y_bins, labels=False, include_lowest=True)
+    df['z_bin'] = pd.cut(df['Goal_mouth_z_co-ordinate'], bins=z_bins, labels=False, include_lowest=True)
+
+    # Calcular diferencia rendimiento esperado vs real
     df['diff'] = df['xgot'] - df['outcome']
-    
-    heatmap_data = df.groupby(['z_bin', 'y_bin'])['diff'].sum().unstack().fillna(0)
-    
-    
+
+    # Crear matriz completa (rellenar con 0)
+    heatmap_data = (
+        df.groupby(['z_bin', 'y_bin'])['diff']
+        .sum()
+        .unstack()
+        .reindex(index=range(bins_z), columns=range(bins_y), fill_value=0)
+    )
+
+    # Crear figura
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.heatmap(
-        heatmap_data, 
-        cmap="RdYlGn", 
+        heatmap_data,
+        cmap="RdYlGn",
         vmin=-2, vmax=2,
-        annot=True, fmt=".2f", 
+        annot=True, fmt=".2f",
         linewidths=0.5, linecolor='gray',
-        cbar_kws={'label': 'Rendimiento Acumulado'}
+        cbar_kws={'label': 'Rendimiento Acumulado'},
+        ax=ax
     )
-    
+
+    # Personalización
     ax.set_title('Rendimiento vs Esperado Según Zona del Arco', fontsize=14)
     ax.set_xticks([])
     ax.set_yticks([])
-    
-    # Eliminar las etiquetas de los ejes
-    ax.set_xlabel('')  # Quitar la etiqueta del eje X
-    ax.set_ylabel('')  # Quitar la etiqueta del eje Y
-    
+    ax.set_xlabel('')
+    ax.set_ylabel('')
     ax.invert_xaxis()
     ax.invert_yaxis()
-    
+
     return fig
+
 
 # Función para generar el heatmap de rendimiento esperado
 def plot_event_heatmap(df, title_event, bins_y, bins_z, cmap_color, y_col='Goal_mouth_y_co-ordinate', z_col='Goal_mouth_z_co-ordinate'):
