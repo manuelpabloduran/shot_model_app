@@ -242,10 +242,6 @@ with tab1:
 
         fig = plot_event_heatmap(df_filtered[df_filtered['NaEventType']=="Attempt Saved"], "Atajadas", bin_y, bin_z, "Greens")
         st.pyplot(fig)
-        
-        # Generar y mostrar el gráfico del mapa de disparos
-        fig_prob_shot_map = plot_shot_map(df_filtered)
-        st.pyplot(fig_prob_shot_map)
 
     with col2:
         fig = plot_performance_heatmap(df_filtered, bin_y, bin_z)
@@ -253,9 +249,6 @@ with tab1:
 
         fig = plot_event_heatmap(df_filtered[df_filtered['NaEventType']=="Goal"], "Goles", bin_y, bin_z, "Reds")
         st.pyplot(fig)
-        
-        fig_shot_map = plot_goal_vs_miss(df_filtered)
-        st.pyplot(fig_shot_map)    
     
     # Rendimiento en el arco
     st.markdown(
@@ -271,10 +264,17 @@ with tab1:
     with col1:
         fig_gk_perf_map = plot_gk_saves_map(df_filtered[df_filtered['NaEventType']=="Goal"], "Goles", cmap_name="Reds")
         st.pyplot(fig_gk_perf_map)
+
+        # Generar y mostrar el gráfico del mapa de disparos
+        fig_prob_shot_map = plot_shot_map(df_filtered)
+        st.pyplot(fig_prob_shot_map)
     
     with col2:
         fig_gk_perf_map = plot_gk_saves_map(df_filtered[df_filtered['NaEventType']=="Attempt Saved"], "Atajadas", cmap_name="Greens")
         st.pyplot(fig_gk_perf_map)
+
+        fig_shot_map = plot_goal_vs_miss(df_filtered)
+        st.pyplot(fig_shot_map)    
 
 with tab2:
     pass
