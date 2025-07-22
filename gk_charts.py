@@ -284,7 +284,10 @@ def plot_gk_performance_map(df_gk):
     df_gk["pitch_zone_gk"] = df_gk.apply(lambda row: classify_pitch_zone(row["GK_X_Coordinate"], row["GK_Y_Coordinate"]), axis=1)
 
     # Calcular la suma acumulada de "diff" por zona
-    zone_values = df_gk.groupby("pitch_zone_gk")["diff"].sum().to_dict()
+    zone_values_raw = df_gk.groupby("pitch_zone_gk")["diff"].sum().to_dict()
+
+    # Completar con 0 para las zonas faltantes
+    zone_values = {zone: zone_values_raw.get(zone, 0) for zone in buckets_gk.keys()}
 
     # Definir normalización de colores (centrado en 0)
     vmin, vmax = min(zone_values.values()), max(zone_values.values())
