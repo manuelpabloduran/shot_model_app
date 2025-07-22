@@ -494,8 +494,9 @@ def plot_total_goles_prevenidos(df, selected_gk):
 
 def plot_gk_kde(df, name_event, cmap_name="Greens"):
     # Crear el campo de fútbol
-    pitch = Pitch(pitch_type='opta', line_color='black')
-    fig, ax = pitch.draw(figsize=(10, 6))
+    pitch = Pitch(pitch_type='opta', pitch_color='white', line_color='black',
+                  stripe=False, corner_arcs=True, goal_type='box', half=True)
+    fig, ax = pitch.draw(figsize=(14, 10))
     
     # Filtrar filas con coordenadas del portero
     df = df.dropna(subset=['GK_X_Coordinate', 'GK_Y_Coordinate'])
