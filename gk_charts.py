@@ -312,9 +312,6 @@ def plot_gk_performance_map(df_gk):
 
     return fig
 
-import matplotlib.patches as patches
-from matplotlib.colors import TwoSlopeNorm
-
 def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
     """
     Genera un gráfico de calor de atajadas del arquero por zona.
@@ -385,11 +382,6 @@ def plot_gk_saves_map(df, name_event, cmap_name="Greens"):
 
     return fig
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
-import matplotlib.pyplot as plt
-
 def plot_goals_vs_xgot(df, x_axis='fecha'):
     """
     Genera un gráfico de línea de goles vs xGoT vs goles prevenidos.
@@ -457,9 +449,6 @@ def plot_goals_vs_xgot(df, x_axis='fecha'):
     plt.tight_layout()
 
     return fig
-
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 def plot_total_goles_prevenidos(df, selected_gk):
     """
