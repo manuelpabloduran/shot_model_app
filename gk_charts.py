@@ -538,6 +538,12 @@ def plot_gk_kde(df, name_event, cmap_name="Greens"):
     
     return fig
 
+# Función para obtener N tiros más cercanos
+def get_nearest_shots(df, x_input, y_input, N=10):
+    df['distance'] = np.sqrt((df['x'] - x_input)**2 + (df['y'] - y_input)**2)
+    nearest = df.nsmallest(N, 'distance')
+    return nearest
+
 # Distancia punto-recta
 def point_to_line_distance(px, py, x1, y1, x2, y2):
     return abs((x2 - x1)*(y1 - py) - (x1 - px)*(y2 - y1)) / np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
