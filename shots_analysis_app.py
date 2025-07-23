@@ -315,15 +315,16 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
-        filter_big_chance = st.checkbox("Big Chance")
-        filter_one_on_one = st.checkbox("1 vs 1 (1_on_1=1)")
+        filter_big_chance = st.checkbox("Big Chance Situations")
+        filter_one_on_one = st.checkbox("1 vs 1 Situations")
+        filter_saves = st.checkbox("Solo Atajadas")
 
     with col2:
         st.write("Parte del cuerpo")
-        filter_right = st.checkbox("Derecha (Right_footed)")
-        filter_left = st.checkbox("Izquierda (Left_footed)")
-        filter_head = st.checkbox("Cabeza (Head)")
-
+        filter_right = st.checkbox("Pie Derecho")
+        filter_left = st.checkbox("Pie Izquierdo")
+        filter_head = st.checkbox("Cabeza")
+    
     # Aplicar filtros dinámicos
     df_filtered = df.copy()
 
@@ -331,6 +332,8 @@ with tab2:
         df_filtered = df_filtered[df_filtered['Big_Chance'] == 1]
     if filter_one_on_one:
         df_filtered = df_filtered[df_filtered['1_on_1'] == 1]
+    if filter_saves:
+        df_filtered = df_filtered[df_filtered['NaEventType'] == "Attempt Saved"]
 
     body_filters = []
     if filter_right:
