@@ -315,7 +315,7 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
-        filter_big_chance = st.checkbox("Big Chance (Big_Chance=1)")
+        filter_big_chance = st.checkbox("Big Chance")
         filter_one_on_one = st.checkbox("1 vs 1 (1_on_1=1)")
 
     with col2:
