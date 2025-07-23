@@ -648,3 +648,75 @@ def plot_with_gk_heatmap_scaled(x_player, y_player, nearest_df, side='right'):
         "Dist GK → Centro Arco": dist_gk_goal}
 
     return fig, metrics
+
+def plot_with_gk_scatter_scaled(x_player, y_player, nearest_df, side='right'):
+    # Escalado en Y (de 100 -> 50)
+    x_player_real = x_player
+    y_player_real = y_player * 0.5
+
+    nearest_df = nearest_df.copy()
+    nearest_df['GK_X_real'] = nearest_df['GK_X_Coordinate']
+    nearest_df['GK_Y_real'] = nearest_df['GK_Y_Coordinate'] * 0.5
+
+    # Configuración del arco
+    goal_x = 100 if side == 'right' else 0
+    goal_center_y = 25
+    goal_y1, goal_y2 = goal_center_y - 7.32/2, goal_center_y + 7.32/2
+
+    # --- Cálculo del MODO KDE ---
+    gk_x = nearest_df['GK_X_real'].values
+    gk_y = nearest_df['GK_Y_real'].values
+
+    kde = gaussian_kde(np.vstack([gk_x, gk_y]))
+    x_grid = np.linspace(gk_x.min(), gk_x.max(), 200)
+    y_grid = np.linspace(gk_y.min(), gk_y.max(), 200)
+    X, Y = np.meshgrid(x_grid, y_grid)
+    positions = np.vstack([X.ravel(), Y.ravel()])
+    Z = kde(positions)
+    idx_max = Z.argmax()
+    mode_gk_x, mode_gk_y = positions[:, idx_max]
+
+    # Crear pitch escalado
+    pitch = Pitch(pitch_type='custom', pitch_length=100, pitch_width=50, line_zorder=2)
+    fig, ax = pitch.draw(figsize=(8, 4))
+
+    # Scatter de posiciones GK
+    ax.scatter(gk_x, gk_y, color='gray', s=8, alpha=0.4, label='Posiciones GK')
+
+    # Punto jugador
+    ax.scatter(x_player_real, y_player_real, color='blue', s=60, zorder=3, label='Jugador')
+
+    # Cono
+    ax.plot([x_player_real, goal_x], [y_player_real, goal_y1], color='orange', linestyle='--', lw=0.5)
+    ax.plot([x_player_real, goal_x], [y_player_real, goal_y2], color='orange', linestyle='--', lw=0.5)
+    cone_polygon = np.array([[x_player_real, y_player_real], [goal_x, goal_y1], [goal_x, goal_y2]])
+    ax.fill(cone_polygon[:, 0], cone_polygon[:, 1], color='orange', alpha=0.05)
+
+    # Centro arco
+    ax.scatter(goal_x, goal_center_y, color='red', s=10, zorder=3)
+
+    # Recta jugador-centro arco
+    ax.plot([x_player_real, goal_x], [y_player_real, goal_center_y], color='green', lw=0.5)
+
+    # Bisectriz
+    v1 = np.array([goal_x - x_player_real, goal_y1 - y_player_real])
+    v2 = np.array([goal_x - x_player_real, goal_y2 - y_player_real])
+    v1_u = v1 / np.linalg.norm(v1)
+    v2_u = v2 / np.linalg.norm(v2)
+    bisector = v1_u + v2_u
+    bisector_u = bisector / np.linalg.norm(bisector)
+    t = (goal_x - x_player_real) / bisector_u[0]
+    bisector_end = [x_player_real + t * bisector_u[0], y_player_real + t * bisector_u[1]]
+    ax.plot([x_player_real, bisector_end[0]], [y_player_real, bisector_end[1]], color='purple', linestyle='-.', lw=0.5)
+
+    # Punto más frecuente (modo KDE)
+    ax.scatter(mode_gk_x, mode_gk_y, color='black', s=20, zorder=3, label='Posición más frecuente (KDE)')
+
+    # Rectas Jugador ↔ GK y GK ↔ Centro Arco
+    ax.plot([x_player_real, mode_gk_x], [y_player_real, mode_gk_y], color='gray', lw=0.5, linestyle=':')
+    ax.plot([mode_gk_x, goal_x], [mode_gk_y, goal_center_y], color='gray', lw=0.5, linestyle=':')
+
+    ax.set_xlim(70, 100)
+    ax.set_ylim(0, 50)
+
+    return fig

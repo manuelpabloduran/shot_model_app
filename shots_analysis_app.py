@@ -371,6 +371,10 @@ with tab2:
                 st.metric("Dist GK → Centro Arco", f"{metrics['Dist GK → Centro Arco']:.2f} m")
 
             # Crear 3 columnas: vacío - gráfico - vacío
-            col1, col2, col3 = st.columns([1, 3, 1])  # col central más grande
-            with col2:
+            col1, col2 = st.columns([1, 1])  # col central más grande
+            with col1:
                 st.pyplot(fig)
+            
+            with col2:
+                fig_gk_scatter = plot_with_gk_scatter_scaled(x_player, y_player, nearest, side='right')
+                st.pyplot(fig_gk_scatter)
