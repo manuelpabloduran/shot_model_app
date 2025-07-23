@@ -8,15 +8,7 @@ from itertools import product
 import pickle
 from scipy.stats import percentileofscore
 import matplotlib.font_manager as fm
-import urllib.request
 
-# Descargar la fuente desde Google Fonts
-url = "https://github.com/google/fonts/raw/main/ofl/sourcesanspro/SourceSansPro-Regular.ttf"
-font_path = "/tmp/SourceSansPro-Regular.ttf"
-urllib.request.urlretrieve(url, font_path)
-
-# Registrar la fuente en Matplotlib
-fm.fontManager.addfont(font_path)
 plt.rcParams['font.family'] = 'Source Sans Pro'
 
 from gk_charts import *
