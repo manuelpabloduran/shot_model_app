@@ -367,7 +367,7 @@ with tab2:
                 st.metric("Dist GK → Bisectriz", f"{metrics['Dist GK → Bisectriz']:.2f} m")
                 st.metric("Dist Jugador → GK", f"{metrics['Dist Jug → GK']:.2f} m")
             with col2:
-                st.metric("Dist GK → Jugador", f"{metrics['Dist GK → Jug-Centro']:.2f} m")
+                st.metric("Dist GK → Recta Centro Arco", f"{metrics['Dist GK → Jug-Centro']:.2f} m")
                 st.metric("Dist GK → Centro Arco", f"{metrics['Dist GK → Centro Arco']:.2f} m")
 
             # Crear 3 columnas: vacío - gráfico - vacío
