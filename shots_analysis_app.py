@@ -355,6 +355,7 @@ with tab2:
         N = max(10, round(0.05 * len(df_filtered)))
 
         if st.button("Generar análisis", key="btn_generate"):
+            
             nearest = get_nearest_shots(df_filtered, x_player, y_player, N=N)
             
             fig, metrics = plot_with_gk_heatmap_scaled(x_player, y_player, nearest, side='right')
@@ -369,5 +370,7 @@ with tab2:
                 st.metric("Dist GK → Jugador", f"{metrics['Dist GK → Jug-Centro']:.2f} m")
                 st.metric("Dist GK → Centro Arco", f"{metrics['Dist GK → Centro Arco']:.2f} m")
 
-            # Mostrar gráfico debajo
-            st.pyplot(fig)
+            # Crear 3 columnas: vacío - gráfico - vacío
+            col1, col2, col3 = st.columns([1, 3, 1])  # col central más grande
+            with col2:
+                st.pyplot(fig)
