@@ -593,10 +593,11 @@ def plot_with_gk_heatmap_scaled(x_player, y_player, nearest_df, side='right'):
         x=gk_x,
         y=gk_y,
         fill=True,
-        cmap='Reds',
-        alpha=0.8,
-        ax=ax,
-        levels=100
+        cmap='RdYlGn',
+        bw_adjust=0.7,
+        levels=40,
+        thresh=0.1,
+        alpha=0.8
     )
 
     # Punto jugador
