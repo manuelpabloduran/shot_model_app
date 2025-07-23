@@ -7,6 +7,8 @@ import seaborn as sns
 import matplotlib.patches as patches
 from matplotlib.colors import TwoSlopeNorm
 import matplotlib.font_manager as fm
+from scipy.stats import gaussian_kde
+
 
 plt.rcParams['font.family'] = 'Source Sans Pro'
 
@@ -548,6 +550,11 @@ def get_nearest_shots(df, x_input, y_input, N=10):
 def point_to_line_distance(px, py, x1, y1, x2, y2):
     return abs((x2 - x1)*(y1 - py) - (x1 - px)*(y2 - y1)) / np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
+# Función para distancia punto-recta
+def point_to_line_distance(px, py, x1, y1, x2, y2):
+    return abs((x2 - x1)*(y1 - py) - (x1 - px)*(y2 - y1)) / np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+# Función principal
 def plot_with_gk_heatmap_scaled(x_player, y_player, nearest_df, side='right'):
     # Escalado en Y (de 100 -> 50)
     x_player_real = x_player
@@ -557,23 +564,34 @@ def plot_with_gk_heatmap_scaled(x_player, y_player, nearest_df, side='right'):
     nearest_df['GK_X_real'] = nearest_df['GK_X_Coordinate']
     nearest_df['GK_Y_real'] = nearest_df['GK_Y_Coordinate'] * 0.5
 
-    # Configuración arco (real)
+    # Configuración del arco
     goal_x = 100 if side == 'right' else 0
     goal_center_y = 25
     goal_y1, goal_y2 = goal_center_y - 7.32/2, goal_center_y + 7.32/2
 
-    # Mediana GK
-    median_gk_x = nearest_df['GK_X_real'].median()
-    median_gk_y = nearest_df['GK_Y_real'].median()
+    # --- Cálculo del MODO KDE ---
+    gk_x = nearest_df['GK_X_real'].values
+    gk_y = nearest_df['GK_Y_real'].values
+
+    # KDE 2D
+    kde = gaussian_kde(np.vstack([gk_x, gk_y]))
+    # Grid para buscar el máximo
+    x_grid = np.linspace(gk_x.min(), gk_x.max(), 200)
+    y_grid = np.linspace(gk_y.min(), gk_y.max(), 200)
+    X, Y = np.meshgrid(x_grid, y_grid)
+    positions = np.vstack([X.ravel(), Y.ravel()])
+    Z = kde(positions)
+    idx_max = Z.argmax()
+    mode_gk_x, mode_gk_y = positions[:, idx_max]
 
     # Crear pitch escalado
     pitch = Pitch(pitch_type='custom', pitch_length=100, pitch_width=50, line_zorder=2)
     fig, ax = pitch.draw(figsize=(10, 6))
 
-    # Heatmap GK (KDE)
+    # Heatmap GK
     sns.kdeplot(
-        x=nearest_df['GK_X_real'],
-        y=nearest_df['GK_Y_real'],
+        x=gk_x,
+        y=gk_y,
         fill=True, cmap='Reds', alpha=0.5, ax=ax, levels=60
     )
 
@@ -603,30 +621,28 @@ def plot_with_gk_heatmap_scaled(x_player, y_player, nearest_df, side='right'):
     bisector_end = [x_player_real + t * bisector_u[0], y_player_real + t * bisector_u[1]]
     ax.plot([x_player_real, bisector_end[0]], [y_player_real, bisector_end[1]], color='purple', linestyle='-.', lw=0.5)
 
-    # Punto mediana GK
-    ax.scatter(median_gk_x, median_gk_y, color='black', s=40, zorder=3, label='Mediana GK')
+    # Punto más frecuente (modo KDE)
+    ax.scatter(mode_gk_x, mode_gk_y, color='black', s=40, zorder=3, label='Posición más frecuente (KDE)')
 
     # Rectas Jugador ↔ GK y GK ↔ Centro Arco
-    ax.plot([x_player_real, median_gk_x], [y_player_real, median_gk_y], color='gray', lw=0.5, linestyle=':')
-    ax.plot([median_gk_x, goal_x], [median_gk_y, goal_center_y], color='gray', lw=0.5, linestyle=':')
+    ax.plot([x_player_real, mode_gk_x], [y_player_real, mode_gk_y], color='gray', lw=0.5, linestyle=':')
+    ax.plot([mode_gk_x, goal_x], [mode_gk_y, goal_center_y], color='gray', lw=0.5, linestyle=':')
 
-    # Distancias en metros
-    d_gk_bis = point_to_line_distance(median_gk_x, median_gk_y, x_player_real, y_player_real, bisector_end[0], bisector_end[1])
-    d_gk_line = point_to_line_distance(median_gk_x, median_gk_y, x_player_real, y_player_real, goal_x, goal_center_y)
-    dist_jug_gk = np.sqrt((x_player_real - median_gk_x)**2 + (y_player_real - median_gk_y)**2)
-    dist_gk_goal = np.sqrt((goal_x - median_gk_x)**2 + (goal_center_y - median_gk_y)**2)
+    # Distancias (en metros)
+    d_gk_bis = point_to_line_distance(mode_gk_x, mode_gk_y, x_player_real, y_player_real, bisector_end[0], bisector_end[1])
+    d_gk_line = point_to_line_distance(mode_gk_x, mode_gk_y, x_player_real, y_player_real, goal_x, goal_center_y)
+    dist_jug_gk = np.sqrt((x_player_real - mode_gk_x)**2 + (y_player_real - mode_gk_y)**2)
+    dist_gk_goal = np.sqrt((goal_x - mode_gk_x)**2 + (goal_center_y - mode_gk_y)**2)
 
-    # Texto en esquina inferior derecha
-    text_info = (
-        f"Dist GK → Bisectriz: {d_gk_bis:.2f} m\n"
-        f"Dist GK → Jug-Centro: {d_gk_line:.2f} m\n"
-        f"Dist Jug → GK: {dist_jug_gk:.2f} m\n"
-        f"Dist GK → Centro Arco: {dist_gk_goal:.2f} m"
-    )
-    ax.text(99, 2, text_info, fontsize=8, ha='right', va='bottom',
-            bbox=dict(facecolor='white', alpha=0.6, edgecolor='none'))
-
-    ax.set_xlim(70, 101)
+    ax.set_xlim(70, 100)
     ax.set_ylim(0, 50)
     
-    return fig
+    plt.title("Optimización Posicionamiento Portero (Basado en KDE)", fontsize=10)
+    
+    metrics = {
+        "Dist GK → Bisectriz": d_gk_bis,
+        "Dist GK → Jug-Centro": d_gk_line,
+        "Dist Jug → GK": dist_jug_gk,
+        "Dist GK → Centro Arco": dist_gk_goal}
+
+    return fig, metrics

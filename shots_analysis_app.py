@@ -354,9 +354,20 @@ with tab2:
         # Calcular N como 5% del dataset filtrado
         N = max(10, round(0.05 * len(df_filtered)))
 
-        # Botón para ejecutar
-        if st.button("Generar análisis"):
+        if st.button("Generar análisis", key="btn_generate"):
             nearest = get_nearest_shots(df_filtered, x_player, y_player, N=N)
+            
+            fig, metrics = plot_with_gk_heatmap_scaled(x_player, y_player, nearest, side='right')
 
-            # Mostrar gráfico
-            st.pyplot(plot_with_gk_heatmap_scaled(x_player, y_player, nearest, side='right'))
+            # Mostrar métricas arriba del gráfico
+            st.subheader("Métricas calculadas")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Dist GK → Bisectriz", f"{metrics['Dist GK → Bisectriz']:.2f} m")
+                st.metric("Dist Jugador → GK", f"{metrics['Dist Jug → GK']:.2f} m")
+            with col2:
+                st.metric("Dist GK → Jugador", f"{metrics['Dist GK → Jug-Centro']:.2f} m")
+                st.metric("Dist GK → Centro Arco", f"{metrics['Dist GK → Centro Arco']:.2f} m")
+
+            # Mostrar gráfico debajo
+            st.pyplot(fig)
