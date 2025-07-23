@@ -626,7 +626,7 @@ def plot_with_gk_heatmap_scaled(x_player, y_player, nearest_df, side='right'):
     ax.plot([x_player_real, bisector_end[0]], [y_player_real, bisector_end[1]], color='purple', linestyle='-.', lw=0.5)
 
     # Punto más frecuente (modo KDE)
-    ax.scatter(mode_gk_x, mode_gk_y, color='black', s=10, zorder=3, label='Posición más frecuente (KDE)')
+    ax.scatter(mode_gk_x, mode_gk_y, color='black', s=20, zorder=3, label='Posición más frecuente (KDE)')
 
     # Rectas Jugador ↔ GK y GK ↔ Centro Arco
     ax.plot([x_player_real, mode_gk_x], [y_player_real, mode_gk_y], color='gray', lw=0.5, linestyle=':')
