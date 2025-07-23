@@ -637,8 +637,6 @@ def plot_with_gk_heatmap_scaled(x_player, y_player, nearest_df, side='right'):
     ax.set_xlim(70, 100)
     ax.set_ylim(0, 50)
     
-    plt.title("Optimización Posicionamiento Portero (Basado en KDE)", fontsize=10)
-    
     metrics = {
         "Dist GK → Bisectriz": d_gk_bis,
         "Dist GK → Jug-Centro": d_gk_line,
