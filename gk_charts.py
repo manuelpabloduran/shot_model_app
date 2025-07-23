@@ -586,13 +586,17 @@ def plot_with_gk_heatmap_scaled(x_player, y_player, nearest_df, side='right'):
 
     # Crear pitch escalado
     pitch = Pitch(pitch_type='custom', pitch_length=100, pitch_width=50, line_zorder=2)
-    fig, ax = pitch.draw(figsize=(10, 6))
+    fig, ax = pitch.draw(figsize=(8, 4))
 
     # Heatmap GK
     sns.kdeplot(
         x=gk_x,
         y=gk_y,
-        fill=True, cmap='Reds', alpha=0.5, ax=ax, levels=60
+        fill=True,
+        cmap='Reds',
+        alpha=0.8,
+        ax=ax,
+        levels=100
     )
 
     # Punto jugador
