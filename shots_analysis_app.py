@@ -47,11 +47,11 @@ buckets = {
 }
 
 # Título de la aplicación
-st.title("⚽ Shot Analysis ⚽")
+st.title("⚽ ANÁLISIS PORTEROS ⚽")
 
 # Cargar datos
-df_new = pd.read_csv('3___model_predict_xg_xgot.csv')
-df_new = df_new[(df_new['xgot']>0)&(df_new['NaPlayer_gk']!="0")]
+df = pd.read_csv('3___model_predict_xg_xgot.csv')
+df_new = df[(df['xgot']>0)&(df['NaPlayer_gk']!="0")]
 df_new['date'] = pd.to_datetime(df_new['TsEvent']).dt.date
 
 # Rango de fechas disponible
@@ -59,7 +59,7 @@ min_date = df_new['date'].min()
 max_date = df_new['date'].max()
 
 # Crear pestañas
-tab1, tab2 = st.tabs(["GoalKeeper Analysis", "Shot Analysis"])
+tab1, tab2 = st.tabs(["Análisis Rendimiento Individual", "Optimización Posicionamiento"])
 
 with tab1:
     st.subheader("🥅 GoalKeeper Analysis 🥅")
@@ -297,5 +297,63 @@ with tab1:
         st.pyplot(fig_shot_map)    
 
 
+# Funciones que ya definimos antes:
+# get_nearest_shots() y plot_with_gk_heatmap_scaled()
+
+# -------------------------------
+# TAB 2 IMPLEMENTACIÓN
+# -------------------------------
 with tab2:
-    pass
+    st.header("Análisis de Posicionamiento del Portero")
+
+    # Sliders para posición del jugador
+    x_player = st.slider("Posición X del jugador", 70, 100, 90)
+    y_player = st.slider("Posición Y del jugador", 30, 70, 50)
+
+    # Filtros para el DataFrame
+    st.subheader("Filtros de Jugada")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        filter_big_chance = st.checkbox("Big Chance (Big_Chance=1)")
+        filter_one_on_one = st.checkbox("1 vs 1 (1_on_1=1)")
+
+    with col2:
+        st.write("Parte del cuerpo")
+        filter_right = st.checkbox("Derecha (Right_footed)")
+        filter_left = st.checkbox("Izquierda (Left_footed)")
+        filter_head = st.checkbox("Cabeza (Head)")
+
+    # Aplicar filtros dinámicos
+    df_filtered = df.copy()
+
+    if filter_big_chance:
+        df_filtered = df_filtered[df_filtered['Big_Chance'] == 1]
+    if filter_one_on_one:
+        df_filtered = df_filtered[df_filtered['1_on_1'] == 1]
+
+    body_filters = []
+    if filter_right:
+        body_filters.append('Right_footed')
+    if filter_left:
+        body_filters.append('Left_footed')
+    if filter_head:
+        body_filters.append('Head')
+
+    if body_filters:
+        df_filtered = df_filtered[df_filtered[body_filters].sum(axis=1) > 0]
+
+    st.write(f"Total jugadas después de filtros: **{len(df_filtered)}**")
+
+    if len(df_filtered) == 0:
+        st.warning("No hay datos para los filtros seleccionados.")
+    else:
+        # Calcular N como 5% del dataset filtrado
+        N = max(10, round(0.05 * len(df_filtered)))
+
+        # Botón para ejecutar
+        if st.button("Generar análisis"):
+            nearest = get_nearest_shots(df_filtered, x_player, y_player, N=N)
+
+            # Mostrar gráfico
+            st.pyplot(plot_with_gk_heatmap_scaled(x_player, y_player, nearest, side='right'))
