@@ -315,14 +315,14 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
-        filter_big_chance = st.checkbox("Big Chance")
-        filter_one_on_one = st.checkbox("1 vs 1")
+        filter_big_chance = st.checkbox("Big Chance (Big_Chance=1)")
+        filter_one_on_one = st.checkbox("1 vs 1 (1_on_1=1)")
 
     with col2:
         st.write("Parte del cuerpo")
-        filter_right = st.checkbox("Pie Derecho")
-        filter_left = st.checkbox("Pie Izquierdo")
-        filter_head = st.checkbox("Cabeza")
+        filter_right = st.checkbox("Derecha (Right_footed)")
+        filter_left = st.checkbox("Izquierda (Left_footed)")
+        filter_head = st.checkbox("Cabeza (Head)")
 
     # Aplicar filtros dinámicos
     df_filtered = df.copy()
