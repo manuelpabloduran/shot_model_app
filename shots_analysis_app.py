@@ -308,7 +308,7 @@ with tab2:
 
     # Sliders para posición del jugador
     x_player = st.slider("Posición X del jugador", 70, 100, 90)
-    y_player = st.slider("Posición Y del jugador", 30, 70, 50)
+    y_player = st.slider("Posición Y del jugador", 15, 85, 50)
 
     # Filtros para el DataFrame
     st.subheader("Filtros de Jugada")
