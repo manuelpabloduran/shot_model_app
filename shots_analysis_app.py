@@ -7,9 +7,6 @@ from mplsoccer import Pitch
 from itertools import product
 import pickle
 from scipy.stats import percentileofscore
-import matplotlib.font_manager as fm
-
-plt.rcParams['font.family'] = 'Source Sans Pro'
 
 from gk_charts import *
 from model_functions import *

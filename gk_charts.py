@@ -6,11 +6,9 @@ from mplsoccer import VerticalPitch, Pitch, PyPizza, add_image, FontManager
 import seaborn as sns
 import matplotlib.patches as patches
 from matplotlib.colors import TwoSlopeNorm
-import matplotlib.font_manager as fm
 from scipy.stats import gaussian_kde
 
 
-plt.rcParams['font.family'] = 'Source Sans Pro'
 
 # Función para generar el gráfico
 def plot_goalkeeper_analysis(df_filtered):
