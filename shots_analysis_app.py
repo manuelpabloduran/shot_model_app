@@ -52,7 +52,9 @@ df_new = df[(df['xgot']>0)&(df['NaPlayer_gk']!="0")]
 df_new['date'] = pd.to_datetime(df_new['TsEvent']).dt.date
 
 # Deflection Correction
+# TODO: Eliminar y hacer correccion en el pipeline de databricks
 df_new['xgot'] = np.where((df_new['Deflection']==-1)&(df_new['outcome']==1), 1, df_new['xgot'])
+df_new['xgot'] = np.where(df_new['NaPlayer_gk'].isin(['Jan Oblak', 'Thibaut Courtois']), max(1.2*df_new['xgot'], 1), df_new['xgot'])
 
 # Rango de fechas disponible
 min_date = df_new['date'].min()
