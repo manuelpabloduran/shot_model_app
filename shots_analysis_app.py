@@ -56,7 +56,7 @@ df_new['date'] = pd.to_datetime(df_new['TsEvent']).dt.date
 df_new['xgot'] = np.where((df_new['Deflection']==-1)&(df_new['outcome']==1), 1, df_new['xgot'])
 df_new['xgot'] = np.where(
     df_new['NaPlayer_gk'].isin(['Jan Oblak', 'Thibaut Courtois']),
-    np.minimum(1.1 * df_new['xgot'], 1),
+    np.minimum(1.05 * df_new['xgot'], 1),
     df_new['xgot']
 )
 
