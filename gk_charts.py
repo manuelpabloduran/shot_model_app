@@ -544,10 +544,6 @@ def get_nearest_shots(df, x_input, y_input, N=10):
     nearest = df.nsmallest(N, 'distance')
     return nearest
 
-# Distancia punto-recta
-def point_to_line_distance(px, py, x1, y1, x2, y2):
-    return abs((x2 - x1)*(y1 - py) - (x1 - px)*(y2 - y1)) / np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-
 # Función para distancia punto-recta
 def point_to_line_distance(px, py, x1, y1, x2, y2):
     return abs((x2 - x1)*(y1 - py) - (x1 - px)*(y2 - y1)) / np.sqrt((x2 - x1)**2 + (y2 - y1)**2)

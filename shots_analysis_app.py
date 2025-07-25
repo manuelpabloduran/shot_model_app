@@ -321,6 +321,7 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
+        filter_regular_plays = st.checkbox("Only Regular Play")
         filter_big_chance = st.checkbox("Big Chance Situations")
         filter_one_on_one = st.checkbox("1 vs 1 Situations")
         filter_saves = st.checkbox("Solo Atajadas")
@@ -334,6 +335,8 @@ with tab2:
     # Aplicar filtros dinámicos
     df_filtered = df.copy()
 
+    if filter_regular_plays:
+        df_filtered = df_filtered[df_filtered['Regular_play'] == 1]
     if filter_big_chance:
         df_filtered = df_filtered[df_filtered['Big_Chance'] == 1]
     if filter_one_on_one:
